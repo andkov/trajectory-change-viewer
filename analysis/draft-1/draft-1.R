@@ -1,44 +1,39 @@
 rm(list = ls(all.names = TRUE)) # Clear the memory of variables from previous run. This is not called by knitr, because it's above the first chunk.
 cat("\014") # Clear the console
+
 # verify root location
 cat("Working directory: ", getwd()) # Must be set to Project Directory
+# if the line above DOES NOT generates the project root, re-map by selecting
+# Session --> Set Working Directory --> To Project Directory location
 # Project Directory should be the root by default unless overwritten
 
 # ---- load-sources ------------------------------------------------------------
-base::source("./scripts/common-functions.R") # project-level
+
+source("./scripts/common-functions.R")
 
 # ---- load-packages -----------------------------------------------------------
-# Choose to be greedy: load only what's needed
-# Three ways, from least (1) to most(3) greedy:
-# -- 1.Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+library(magrittr)  # pipes
+library(dplyr)     # data wrangling
 library(ggplot2)   # graphs
+library(janitor)   # tidy data
+library(tidyr)     # data wrangling
 library(forcats)   # factors
 library(stringr)   # strings
 library(lubridate) # dates
-library(labelled)  # labels
-# -- 2.Import only certain functions of a package into the search path.
-import::from("magrittr", "%>%")
-# -- 3. Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
-requireNamespace("readr"    )# data import/export
-requireNamespace("readxl"   )# data import/export
-requireNamespace("tidyr"    )# tidy data
-requireNamespace("janitor"  )# tidy data
-requireNamespace("dplyr"    )# Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
-requireNamespace("testit"   )# For asserting conditions meet expected patterns.
 
 # ---- declare-globals ---------------------------------------------------------
-# printed figures will go here:
-# prints_folder <- paste0("./analysis/.../prints/")
-# if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
 
-path_data_input <- "./data-private/derived/..."
 # ---- declare-functions -------------------------------------------------------
-# printed figures will go here:
+# custom function for HTML tables
+
 prints_folder <- paste0("./analysis/.../prints/")
-if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
+if(!file.exists(prints_folder)){
+  dir.create(file.path(prints_folder))
+}
+
 
 # ---- load-data ---------------------------------------------------------------
-ds0 <- readr::read_rds(path_data_input)
+
 
 # ---- inspect-data ------------------------------------------------------------
 
@@ -55,8 +50,6 @@ ds0 <- readr::read_rds(path_data_input)
 # ---- graph-2 -----------------------------------------------------------------
 
 # ---- save-to-disk ------------------------------------------------------------
-
-# ---- publish ------------------------------------------------------------
 path <- "./analysis/.../report-isolated.Rmd"
 rmarkdown::render(
   input = path ,
