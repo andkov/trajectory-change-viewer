@@ -93,6 +93,7 @@ draft_2 <- function(
   time_var = "year"
   color_var = "gender"
   vfacet_var = "age"
+  # vfacet_var = NULL
   hfacet_var = "race"
   # hfacet_var = NULL
   pct_from = "row" # row, column, total
@@ -106,22 +107,33 @@ draft_2 <- function(
     d |> 
     group_by( !!!rlang::syms(grouping_vars)) |> 
     summarize(
-      id_count = n()
-    ) |> 
-    group_by(!!!rlang::syms(pct_vars))
+      cell_count = n()
+    ) #|> 
+    # group_by(!!!rlang::syms(pct_vars))
 d1
 
   g1 <- 
     d1 |> 
     ggplot(aes(
       x      = !!rlang::sym(time_var)
-      ,y     = id_count
+      ,y     = cell_count
       ,color = !!rlang::sym(color_var)
     ))+
-    geom_line()+
-    geom_point()+
-    facet_wrap(facets = facet_vars)+
+    geom_line() +
+    geom_point() +
     labs()
+
+  if( is.null(facet_vars) ) {
+    # Don't do anything if not faceting variables are specified.
+  } else if (length(facet_vars) == 1L) {
+    g1 <- g1 + facet_wrap(facet_vars) #,  scales="free_y")
+  } else if (length(facet_vars) == 2L) {
+    facet_grid_string <- sprintf("%s ~ %s", facet_vars[1], facet_vars[2])
+    g1 <- g1 + facet_grid(facet_grid_string)
+  } else {
+    stop("This graphing function supports only 0, 1, or 2 faceting variables.")
+  }
+
   g1
 }
 
