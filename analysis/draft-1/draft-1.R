@@ -30,7 +30,7 @@ library(tsibble)   # time
 # ---- declare-functions -------------------------------------------------------
 # custom function for HTML tables
 
-prints_folder <- paste0("./analysis/.../prints/")
+prints_folder <- paste0("./analysis/draft-1/prints/")
 if(!file.exists(prints_folder)){
   dir.create(file.path(prints_folder))
 }
