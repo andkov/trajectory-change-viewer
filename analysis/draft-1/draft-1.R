@@ -40,13 +40,13 @@ if(!file.exists(prints_folder)){
 ds0 <- readr::read_rds("./data-public/raw/example-prosthetic-1.rds")
 
 # ---- inspect-data ------------------------------------------------------------
-ds0 %>% glimpse()
-ds0 %>% describe_all()
-ds0 %>% look_for()
+ds0 |> glimpse()
+ds0 |> describe_all()
+ds0 |> look_for()
 
 # ---- tweak-data --------------------------------------------------------------
 ds1 <- 
-  ds0 %>% 
+  ds0 |> 
   mutate(
     year         = lubridate::year(date)
     # ,yearmon     = tsibble::yearmonth(date) # not supported by look_for()
@@ -55,20 +55,20 @@ ds1 <-
     ,quarter_fiscal = quarter - 1
     ,quarter_fiscal = ifelse(quarter_fiscal==0,4,quarter_fiscal)
   )
-ds1 %>% look_for()
+ds1 |> look_for()
 # ---- table-1 -----------------------------------------------------------------
 dt1 <- 
-  ds1 %>% 
+  ds1 |> 
   group_by(
     year, gender, age, race
-  ) %>% 
+  ) |> 
   summarize(
     id_count = n()
   )
 dt1
 # ---- graph-1 -----------------------------------------------------------------
 g1 <- 
-  dt1 %>% 
+  dt1 |> 
   ggplot(aes(
     x = year
     ,y = id_count
@@ -103,16 +103,16 @@ draft_2 <- function(
  #   pct_vars <- c()
  # }    
  d1 <- 
-    d %>% 
-    group_by( !!!rlang::syms(grouping_vars)) %>% 
+    d |> 
+    group_by( !!!rlang::syms(grouping_vars)) |> 
     summarize(
       id_count = n()
-    ) %>% 
+    ) |> 
     group_by(!!!rlang::syms(pct_vars))
 d1
 
   g1 <- 
-    d1 %>% 
+    d1 |> 
     ggplot(aes(
       x      = !!rlang::sym(time_var)
       ,y     = id_count
@@ -127,10 +127,10 @@ d1
 
 
 d2 <-
-  ds1 %>% 
+  ds1 |> 
   group_by(
     year, gender, age, race
-  ) %>% 
+  ) |> 
   summarize(
     id_count = n()
   )
