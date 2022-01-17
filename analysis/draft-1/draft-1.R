@@ -98,18 +98,18 @@ draft_2 <- function(
   pct_from = "row" # row, column, total
   
  grouping_vars <- c(time_var, color_var, vfacet_var, hfacet_var)
- facet_vars <- c(vfacet_var,hfacet_var)
- if(pct_from=="row"){
-   pct_vars <- c()
- }    
+ facet_vars <- c(vfacet_var, hfacet_var)
+ # if(pct_from=="row"){
+ #   pct_vars <- c()
+ # }    
  d1 <- 
     d %>% 
     group_by( !!!rlang::syms(grouping_vars)) %>% 
     summarize(
       id_count = n()
     ) %>% 
-    group_by(!!!rlang::syms(pct_variables))
-  d1
+    group_by(!!!rlang::syms(pct_vars))
+d1
 
   g1 <- 
     d1 %>% 
@@ -124,6 +124,8 @@ draft_2 <- function(
     labs()
   g1
 }
+
+
 d2 <-
   ds1 %>% 
   group_by(
