@@ -88,6 +88,7 @@ draft_2 <- function(
   ,color_var
   ,vfacet_var
   ,hfacet_var 
+  # ,missing_level_label = "unknown"
 ){
   d <- ds1
   time_var = "year"
@@ -114,9 +115,24 @@ draft_2 <- function(
   facet_vars <- c(vfacet_var, hfacet_var)
   # if(pct_from=="row"){
   #   pct_vars <- c()
-  # }    
-  d1 <- 
+  # }  
+  
+  # d1 <- 
     d |> 
+    dplyr::mutate(
+      # Do nothing for integers & doubles
+      # 
+      # Do this for factors
+      across(c("gender", "age", "race"), ~ forcats::fct_explicit_na(.x, missing_level_label)) 
+      # Do something else for characters
+      # across(c("gender", "age", "race"), ~ dplyr::coalesce(.x, missing_level_label))
+      
+      # across(grouping_vars, ~ dplyr::coalesce(.x, missing_level_label))
+      # across(grouping_vars, ~ paste(as.character(.x) , "==="))
+    )
+  
+  d1 <- 
+    d1 |> 
     group_by( !!!rlang::syms(grouping_vars)) |> 
     summarize(
       cell_count = n()
