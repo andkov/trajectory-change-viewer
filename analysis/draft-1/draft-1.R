@@ -87,17 +87,29 @@ draft_2 <- function(
   ,time_var
   ,color_var
   ,vfacet_var
-  ,hfacet_var
+  ,hfacet_var 
 ){
   d <- ds1
   time_var = "year"
   color_var = "gender"
+  # color_var = character()
   vfacet_var = "age"
-  # vfacet_var = NULL
+  # vfacet_var = character()
   hfacet_var = "race"
-  # hfacet_var = NULL
+  # hfacet_var = character()
+  # hfacet_var = character()
   pct_from = "row" # row, column, total
   
+  checkmate::assert_character(color_var , min.len=0, max.len=1, unique=T)
+  checkmate::assert_character(hfacet_var, min.len=0, max.len=2, unique=T)
+  
+  color_symbol <- 
+    if (length(color_var) == 0L) {
+      NULL
+    } else {
+      rlang::sym(color_var)
+    }
+      
  grouping_vars <- c(time_var, color_var, vfacet_var, hfacet_var)
  facet_vars <- c(vfacet_var, hfacet_var)
  # if(pct_from=="row"){
@@ -108,8 +120,9 @@ draft_2 <- function(
     group_by( !!!rlang::syms(grouping_vars)) |> 
     summarize(
       cell_count = n()
-    ) #|> 
+    ) |> 
     # group_by(!!!rlang::syms(pct_vars))
+   dplyr::ungroup()
 d1
 
   g1 <- 
@@ -117,13 +130,13 @@ d1
     ggplot(aes(
       x      = !!rlang::sym(time_var)
       ,y     = cell_count
-      ,color = !!rlang::sym(color_var)
+      ,color = !!color_symbol
     ))+
     geom_line() +
     geom_point() +
     labs()
 
-  if( is.null(facet_vars) ) {
+  if( length(facet_vars) == 0L ) {
     # Don't do anything if not faceting variables are specified.
   } else if (length(facet_vars) == 1L) {
     g1 <- g1 + facet_wrap(facet_vars) #,  scales="free_y")
