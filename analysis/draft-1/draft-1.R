@@ -11,6 +11,7 @@ cat("Working directory: ", getwd()) # Must be set to Project Directory
 
 source("./scripts/common-functions.R")
 source("./scripts/operational-functions.R")
+source("./analysis/draft-1/graphing-functions.R")
 
 # ---- load-packages -----------------------------------------------------------
 library(magrittr)  # pipes
@@ -80,6 +81,41 @@ g1 <-
   # facet_wrap(facets = c("age","race"))+
   labs()
 g1
+
+# ------ graph-3 ---------------------------------------------------------------
+
+# the simplest form
+l <- 
+  ds1 %>% 
+  prep_data_trajectory(
+    outcome_var = "employed"
+    ,time_var = "year"
+    ,count_var = "id"
+  )
+l$data
+l$meta %>% unlist()
+
+# most complex form
+l <- 
+  ds1 %>% 
+  prep_data_trajectory(
+    outcome_var = "employed"
+    ,time_var = "year"
+    ,count_var = "id"
+    ,color_var    = "gender"
+    # ,facet_row_var = "race"
+    # ,facet_col_var = "age"
+    ,percent_var = "race"
+    # ,total_cat_var = "year"
+  )
+l$data
+l$meta %>% unlist()
+
+ 
+l$data %>%
+  # filter(year==2011) %>%
+  filter(gender == "male") 
+
 # ---- graph-2 -----------------------------------------------------------------
 # add totals to each graph
 draft_2 <- function(
