@@ -110,20 +110,20 @@ draft_2 <- function(
       rlang::sym(color_var)
     }
       
- grouping_vars <- c(time_var, color_var, vfacet_var, hfacet_var)
- facet_vars <- c(vfacet_var, hfacet_var)
- # if(pct_from=="row"){
- #   pct_vars <- c()
- # }    
- d1 <- 
+  grouping_vars <- c(time_var, color_var, vfacet_var, hfacet_var)
+  facet_vars <- c(vfacet_var, hfacet_var)
+  # if(pct_from=="row"){
+  #   pct_vars <- c()
+  # }    
+  d1 <- 
     d |> 
     group_by( !!!rlang::syms(grouping_vars)) |> 
     summarize(
       cell_count = n()
     ) |> 
     # group_by(!!!rlang::syms(pct_vars))
-   dplyr::ungroup()
-d1
+    dplyr::ungroup()
+  d1
 
   g1 <- 
     d1 |> 
