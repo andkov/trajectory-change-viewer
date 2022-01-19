@@ -57,30 +57,8 @@ ds1 <-
     ,quarter_fiscal = ifelse(quarter_fiscal==0,4,quarter_fiscal)
   )
 ds1 |> look_for()
-# ---- table-1 -----------------------------------------------------------------
-dt1 <- 
-  ds1 |> 
-  group_by(
-    year, gender, age, race
-  ) |> 
-  summarize(
-    id_count = n()
-  )
-dt1
-# ---- graph-1 -----------------------------------------------------------------
-g1 <- 
-  dt1 |> 
-  ggplot(aes(
-    x = year
-    ,y = id_count
-    ,color = gender
-  ))+
-  geom_line()+
-  geom_point()+
-  facet_grid(age ~ race)+
-  # facet_wrap(facets = c("age","race"))+
-  labs()
-g1
+
+
 
 # ------ graph-3 ---------------------------------------------------------------
 
@@ -105,11 +83,12 @@ l <-
     ,color_var     = "gender"
     ,facet_row_var = "race"
     ,facet_col_var = "age"
+    
     # ,percent_var   = "gender"
     # ,percent_var   = "race"
     ,percent_var   = "gender"
-    # ,total_cat_var = "year"
-    # ,total_cat_var = "gender"
+    
+     # ,total_cat_var = "gender"
     # ,total_cat_var = "race"
     ,total_cat_var = "age"
   )
@@ -242,6 +221,30 @@ d2 <-
   summarize(
     id_count = n()
   )
+
+# ---- graph-1 -----------------------------------------------------------------
+dt1 <- 
+  ds1 |> 
+  group_by(
+    year, gender, age, race
+  ) |> 
+  summarize(
+    id_count = n()
+  )
+dt1
+g1 <- 
+  dt1 |> 
+  ggplot(aes(
+    x = year
+    ,y = id_count
+    ,color = gender
+  ))+
+  geom_line()+
+  geom_point()+
+  facet_grid(age ~ race)+
+  # facet_wrap(facets = c("age","race"))+
+  labs()
+g1
 
 
 # ---- save-to-disk ------------------------------------------------------------
