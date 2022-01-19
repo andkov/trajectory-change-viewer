@@ -89,8 +89,8 @@ l <-
   ds1 %>% 
   prep_data_trajectory(
     outcome_var = "employed"
-    ,time_var = "year"
-    ,count_var = "id"
+    ,time_var   = "year"
+    ,count_var  = "id"
   )
 l$data
 l$meta %>% unlist()
@@ -99,23 +99,54 @@ l$meta %>% unlist()
 l <- 
   ds1 %>% 
   prep_data_trajectory(
-    outcome_var = "employed"
-    ,time_var = "year"
-    ,count_var = "id"
-    ,color_var    = "gender"
-    # ,facet_row_var = "race"
-    # ,facet_col_var = "age"
-    ,percent_var = "race"
+    outcome_var    = "employed" # outcome of interest (binary or continuous)
+    ,time_var      = "year" # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"
+    ,color_var     = "gender"
+    ,facet_row_var = "race"
+    ,facet_col_var = "age"
+    # ,percent_var   = "gender"
+    # ,percent_var   = "race"
+    ,percent_var   = "gender"
     # ,total_cat_var = "year"
+    # ,total_cat_var = "gender"
+    # ,total_cat_var = "race"
+    ,total_cat_var = "age"
   )
 l$data
 l$meta %>% unlist()
 
  
-l$data %>%
-  # filter(year==2011) %>%
-  filter(gender == "male") 
+g <- 
+  l %>% 
+  plot_trajectory(
+    y_var       = "cell_prop"
+    ,facet      = "grid"
+    ,scale_mode = "free"
+  )
+g
 
+
+g <- 
+  ds1 %>% 
+  prep_plot_trajectory(
+    outcome_var    = "employed"  # outcome of interest (binary or continuous)
+    ,y_var         = "cell_prop" # cell_count, cell_prop
+    ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"
+    ,color_var     = "gender"
+    ,facet_row_var = "race"
+    ,facet_col_var = "age"
+    # ,percent_var   = "gender"
+    # ,percent_var   = "race"
+    ,percent_var   = "gender"
+    # ,total_cat_var = "year"
+    # ,total_cat_var = "gender"
+    # ,total_cat_var = "race"
+    ,total_cat_var = "age"
+    ,facet      = "grid"
+    ,scale_mode = "free"
+  )
 # ---- graph-2 -----------------------------------------------------------------
 # add totals to each graph
 draft_2 <- function(
