@@ -8,7 +8,6 @@ cat("Working directory: ", getwd()) # Must be set to Project Directory
 # Project Directory should be the root by default unless overwritten
 
 # ---- load-sources ------------------------------------------------------------
-
 source("./scripts/common-functions.R")
 source("./scripts/operational-functions.R")
 source("./analysis/draft-1/graphing-functions.R")
@@ -30,12 +29,10 @@ library(tsibble)   # time
 
 # ---- declare-functions -------------------------------------------------------
 # custom function for HTML tables
-
 prints_folder <- paste0("./analysis/draft-1/prints/")
 if(!file.exists(prints_folder)){
   dir.create(file.path(prints_folder))
 }
-
 
 # ---- load-data ---------------------------------------------------------------
 ds0 <- readr::read_rds("./data-public/raw/example-prosthetic-1.rds")
@@ -58,10 +55,7 @@ ds1 <-
   )
 ds1 |> look_for()
 
-
-
 # ------ graph-3 ---------------------------------------------------------------
-
 # the simplest form
 l <- 
   ds1 %>% 
@@ -69,6 +63,7 @@ l <-
     outcome_var = "employed"
     ,time_var   = "year"
     ,count_var  = "id"
+    # all others NULL by default
   )
 l$data
 l$meta %>% unlist()
@@ -78,24 +73,26 @@ l <-
   ds1 %>% 
   prep_data_trajectory(
     outcome_var    = "employed" # outcome of interest (binary or continuous)
-    ,time_var      = "year" # quarter, year, quarter_fiscal, year_fiscal
+    ,time_var      = "year"     # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"
     ,color_var     = "gender"
-    ,facet_row_var = "race"
-    ,facet_col_var = "age"
+    ,vfacet_var = "race"
+    ,hfacet_var = "age"
     
     # ,percent_var   = "gender"
     # ,percent_var   = "race"
-    ,percent_var   = "gender"
+    # ,percent_var   = "gender"
+  
     
      # ,total_cat_var = "gender"
     # ,total_cat_var = "race"
-    ,total_cat_var = "age"
+    # ,total_cat_var = "age"
+    # ,total_cat_var = "year"
   )
 l$data
 l$meta %>% unlist()
 
- 
+# graph production from dto (list) 
 g <- 
   l %>% 
   plot_trajectory(
@@ -105,6 +102,8 @@ g <-
   )
 g
 
+# application as the combined function
+# 
 
 g <- 
   ds1 %>% 
@@ -114,8 +113,8 @@ g <-
     ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"
     ,color_var     = "gender"
-    ,facet_row_var = "race"
-    ,facet_col_var = "age"
+    ,vfacet_var = "race"
+    ,hfacet_var = "age"
     # ,percent_var   = "gender"
     # ,percent_var   = "race"
     ,percent_var   = "gender"
