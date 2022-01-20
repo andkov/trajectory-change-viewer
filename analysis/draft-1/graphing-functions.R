@@ -40,7 +40,7 @@ percent_var_i    = "gender" # "percent from" will represent share from this cate
 #   # filter(service_id %in% (sample( unique(.$person_oid), 100000))) %>%
 #   select(person_oid, service_id,service_category, start_date, year_fiscal, gender, age_at_prog_start, age_group, race, education )
 
-# ---- prep-define ---------------
+# ---- prep-data-trajectory ---------------
 # d0
 prep_data_trajectory <- function(
   d
@@ -50,9 +50,9 @@ prep_data_trajectory <- function(
   ,count_var            # = "id"
   # optional arguments
   ,color_var     = NULL # = "gender"
-  ,facet_row_var = NULL # = "race"
-  ,facet_col_var = NULL # = "age"
-  ,total_cat_var = NULL # = facet_row_var # new group "Total" will be inserted into this variable, summing across others
+  ,vfacet_var = NULL # = "race"
+  ,hfacet_var = NULL # = "age"
+  ,total_var = NULL # = vfacet_var # new group "Total" will be inserted into this variable, summing across others
   ,percent_var   = NULL # = color_var # "percent from" will represent share from this category
   # prep level specific defaults
   # ,forecast_var = "cell_count"
@@ -63,16 +63,16 @@ prep_data_trajectory <- function(
   # time_var       = "year_fiscal"
   # count_var      = "id" # unique row ids used to compute `cell_count`
   # color_var      = "gender"
-  # facet_row_var  = "age"              # rows
-  # facet_col_var  = "race" # columns
-  # total_cat_var  =  NULL # group "Total" added, summing across others
+  # vfacet_var  = "age"              # rows
+  # hfacet_var  = "race" # columns
+  # total_var  =  NULL # group "Total" added, summing across others
   # percent_var    = "gender" # "percent from ____" will represent share from this category
   # # prep level specific defaults
   #
   # browser()
-  (row_name           <- c(color_var, facet_row_var, facet_col_var) %>% unique())
+  (row_name           <- c(color_var, vfacet_var, hfacet_var) %>% unique())
   (most_granular_vars <- c(time_var, row_name)                         %>% unique())
-  (total_group_vars   <- setdiff(most_granular_vars, total_cat_var) %>% unique())
+  (total_group_vars   <- setdiff(most_granular_vars, total_var) %>% unique())
   (percent_from_vars  <- setdiff(most_granular_vars, percent_var)   %>% unique())
   
   get_custom_summary <- function(xd){
@@ -97,13 +97,13 @@ prep_data_trajectory <- function(
     get_custom_summary()
 
   #### STEP 12a  - if Total category is requested, it will be added as more rows
-  if(!is.null(total_cat_var)){
+  if(!is.null(total_var)){
     d2 <-
       d %>%
       group_by_at(vars(all_of(  total_group_vars  ))) %>%
       get_custom_summary()%>%
       mutate(
-        !!rlang::sym(total_cat_var) := "Total"
+        !!rlang::sym(total_var) := "Total"
       )
     d12 <- dplyr::bind_rows(d1, d2) # adding new rows
   }else{
@@ -120,11 +120,11 @@ prep_data_trajectory <- function(
     ) %>%
     ungroup()
   #### STEP 12b - Tweak factors if adding Totals messed it up
-  if(!is.null(total_cat_var)){
+  if(!is.null(total_var)){
     d3 <-  # must overwrite because Total is optional
       d3 %>%
       mutate(
-        !!rlang::sym(total_cat_var) := as_factor(!!rlang::sym(total_cat_var)) %>%
+        !!rlang::sym(total_var) := as_factor(!!rlang::sym(total_var)) %>%
           fct_relevel("Total", after = Inf)
       )
   }
@@ -149,9 +149,9 @@ prep_data_trajectory <- function(
       "time_var"           = list(time_var)
       # ,"forecast_var"   = list(forecast_var)
       ,"color_var"      = list(color_var)
-      ,"facet_row_var"  = list(facet_row_var)
-      ,"facet_col_var"  = list(facet_col_var)
-      ,"total_cat_var"  = list(total_cat_var) # new group "Total" will be inserted into this variable, summing across others
+      ,"vfacet_var"  = list(vfacet_var)
+      ,"hfacet_var"  = list(hfacet_var)
+      ,"total_var"  = list(total_var) # new group "Total" will be inserted into this variable, summing across others
       ,"percent_var"    = list(percent_var)   # listed as "percent from _____" , will represent share from this category
       ,"count_var"      = list(count_var)     # row ids tallied with group_by
       ,"outcome_var"    = list(outcome_var)   # the outcome of interest
@@ -169,9 +169,9 @@ prep_data_trajectory <- function(
 #      time_var          = "year_fiscal"
 #      ,forecast_var         = forecast_var_i # create forecast for this measure
 #     ,color_var      = color_var_i
-#     ,facet_row_var  = facet_row_var_i
-#     ,facet_col_var  = facet_col_var_i
-#     ,total_cat_var  = total_cat_var_i # adds "Total" category to this var
+#     ,vfacet_var  = facet_row_var_i
+#     ,hfacet_var  = facet_col_var_i
+#     ,total_var  = total_cat_var_i # adds "Total" category to this var
 #     ,percent_var    = percent_var_i # percent from this
 #     # prep level specific defaults
 #     ,count_var       = "service_id"
@@ -192,7 +192,7 @@ prep_data_trajectory <- function(
 
 
 
-# ---- plot-define -----------------------
+# ---- plot-trajectory -----------------------
 # works with the product of `prep_data_trajectory()`
 plot_trajectory <- function(
   d
@@ -204,8 +204,8 @@ plot_trajectory <- function(
   time_sym      <- rlang::sym( l[["meta"]][["time_var"]]      )
   y_sym         <- rlang::sym( y_var                          )
   color_sym     <- rlang::sym( l[["meta"]][["color_var"]]     ) 
-  facet_row_sym <- rlang::sym( l[["meta"]][["facet_row_var"]] )
-  facet_col_sym <- rlang::sym( l[["meta"]][["facet_col_var"]] )
+  facet_row_sym <- rlang::sym( l[["meta"]][["vfacet_var"]] )
+  facet_col_sym <- rlang::sym( l[["meta"]][["hfacet_var"]] )
   facet_vars    <- c( facet_row_sym, facet_col_sym            ) 
   percent_var   <- l[["meta"]][["percent_var"]]
   # browser()
@@ -256,3 +256,65 @@ plot_trajectory <- function(
 #     ,facet       = "grid" # grid, wrap
 #     ,scale_mode = "free_y" # free , free_x , free_y, fixed
 #    )
+
+# ----- prep-plot-trajectory --------------------------------------------------
+
+
+prep_plot_trajectory <- function(variables) {
+  
+  # data logic tests
+  # `percent_var` must be !NULL and one of additional dimensions
+  # `total_var`
+  
+}
+# how to use
+ds1 %>% 
+  prep_plot_trajectory(
+    outcome_var    = "employed"  # outcome of interest (binary or continuous)
+    ,y_var         = "cell_prop" # cell_count, cell_prop
+    ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"        # unique row identifier
+    # three optional dimensions 
+    ,color_var     = "gender"    # color 
+    ,vfacet_var = "race"      # facet rows on this variable
+    ,hfacet_var = "age"       # facet columns on this variable
+                                 # sum `percent_var` to get 100% 
+    # ,percent_var   = "gender"  # selected from optional dimensions (not NULL)
+    # ,percent_var   = "race"    # selected from optional dimensions (not NULL)
+    ,percent_var   = "gender"    # selected from optional dimensions (not NULL)
+                                 # adds "Total" as another level of `total_var`
+    # ,total_var = "gender"  # selected from optional dimensions (not NULL)
+    # ,total_var = "age"     # selected from optional dimensions (not NULL)
+    # ,total_var = "race"    # selected from optional dimensions (not NULL)
+    
+    ,facet         = "grid"      # grid, wrap
+    ,scale_mode    = "free"      # free, fixed, fixed_y, fixed_x
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
