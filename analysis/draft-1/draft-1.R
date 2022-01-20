@@ -55,6 +55,52 @@ ds1 <-
   )
 ds1 |> look_for()
 
+
+# ------ graph-5 ---------------------------------------------------------------
+# application as the combined function
+# 
+
+g <- 
+  ds1 %>% 
+  prep_plot_trajectory(
+    outcome_var    = "employed"   # outcome of interest (binary or continuous)
+    ,y_var         = "cell_count" # cell_count, cell_prop
+    ,time_var      = "year"       # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"
+    # ,color_var   = "gender"
+    # ,vfacet_var  = "race"
+    # ,hfacet_var  = "age"
+    # ,percent_var = "gender" # gender, race, age
+    ,total_var   = "year" # gender, race, age
+    # ,facet       = "grid"
+    # ,scale_mode  = "free"
+  )
+g
+# ------ graph-4 ---------------------------------------------------------------
+l <- 
+  ds1 %>% 
+  prep_data_trajectory(
+    outcome_var    = "employed" # outcome of interest (binary or continuous)
+    ,time_var      = "year"     # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"
+    # ,color_var     = "gender" 
+    # ,vfacet_var    = "race"
+    # ,hfacet_var    = "age"
+    # ,percent_var   = "year"
+    # ,total_var     = "gender"
+  )
+l$data 
+l$meta$percent_var
+# graph production from dto (list) 
+g <- 
+  l %>% 
+  plot_trajectory(
+    y_var       = "cell_count" # cell_prop, cell_count
+    ,facet      = "grid"      # wrap, grid
+    ,scale_mode = "free"      # free, fixed, free_x, free_y
+  )
+g
+
 # ------ graph-3 ---------------------------------------------------------------
 # the simplest form
 l <- 
@@ -76,10 +122,10 @@ l <-
     ,time_var      = "year"     # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"
     ,color_var     = "gender"
-    ,vfacet_var = "race"
-    ,hfacet_var = "age"
+    ,vfacet_var    = "race"
+    ,hfacet_var    = "age"
     
-    # ,percent_var   = "gender"
+    ,percent_var   = "gender"
     # ,percent_var   = "race"
     # ,percent_var   = "gender"
   
@@ -87,7 +133,7 @@ l <-
      # ,total_cat_var = "gender"
     # ,total_cat_var = "race"
     # ,total_cat_var = "age"
-    # ,total_cat_var = "year"
+    ,total_cat_var = "year"
   )
 l$data
 l$meta %>% unlist()
@@ -96,35 +142,13 @@ l$meta %>% unlist()
 g <- 
   l %>% 
   plot_trajectory(
-    y_var       = "cell_prop"
+    y_var       = "cell_count"
     ,facet      = "grid"
     ,scale_mode = "free"
   )
 g
 
-# application as the combined function
-# 
 
-g <- 
-  ds1 %>% 
-  prep_plot_trajectory(
-    outcome_var    = "employed"  # outcome of interest (binary or continuous)
-    ,y_var         = "cell_prop" # cell_count, cell_prop
-    ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
-    ,count_var     = "id"
-    ,color_var     = "gender"
-    ,vfacet_var = "race"
-    ,hfacet_var = "age"
-    # ,percent_var   = "gender"
-    # ,percent_var   = "race"
-    ,percent_var   = "gender"
-    # ,total_cat_var = "year"
-    # ,total_cat_var = "gender"
-    # ,total_cat_var = "race"
-    ,total_cat_var = "age"
-    ,facet      = "grid"
-    ,scale_mode = "free"
-  )
 # ---- graph-2 -----------------------------------------------------------------
 # add totals to each graph
 draft_2 <- function(
