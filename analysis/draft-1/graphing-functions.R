@@ -314,6 +314,25 @@ prep_plot_trajectory <- function(
   ,facet       = "grid"   # grid, wrap
   ,scale_mode  = "free"      # free, fixed, fixed_y, fixed_x
 ) {
+  # browser()
+  # logical tests
+  # total must be one of three dimensions
+  # if(
+  #   (!is.null(total_var))
+  #   &
+  #   (!any(c(color_var, vfacet_var, hfacet_var))==total_var)
+  #   ){
+  #   print("`total_var` must be one of the additional demensions")
+  # }
+  optional_dimensions <- c(color_var, vfacet_var, hfacet_var)
+  if(!is.null(total_var)){
+  checkmate::assert_subset(
+    x         = total_var, 
+    choices   = optional_dimensions,
+    empty.ok  = FALSE
+  )
+  }
+  
   
   l <- 
     d %>% 
