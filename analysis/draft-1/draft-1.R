@@ -67,11 +67,11 @@ g <-
     ,y_var         = "cell_prop" # cell_count, cell_prop
     ,time_var      = "year"       # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"
-    ,color_var   = "gender"
-    # ,vfacet_var  = "gender"
-    ,hfacet_var  = "gender"
-    ,percent_var = "year" # gender, race, age
-    ,total_var   = "gender" # gender, race, age
+    # ,color_var   = "gender"
+    # ,vfacet_var  = "race"
+    # ,hfacet_var  = "gender"
+    # ,percent_var = "gender" # gender, race, age
+    # ,total_var   = "race" # gender, race, age
     # ,facet       = "grid"
     # ,scale_mode  = "free"
   )
