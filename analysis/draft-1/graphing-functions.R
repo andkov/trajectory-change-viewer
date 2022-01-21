@@ -324,6 +324,7 @@ prep_plot_trajectory <- function(
   #   ){
   #   print("`total_var` must be one of the additional demensions")
   # }
+  # `total_var` must be one of the provided dimensions
   optional_dimensions <- c(color_var, vfacet_var, hfacet_var)
   if(!is.null(total_var)){
   checkmate::assert_subset(
@@ -332,7 +333,7 @@ prep_plot_trajectory <- function(
     empty.ok  = FALSE
   )
   }
-  
+
   
   l <- 
     d %>% 
@@ -349,6 +350,14 @@ prep_plot_trajectory <- function(
   # l$data 
   # l$meta$percent_var
   # graph production from dto (list) 
+  # `percent_var` must be one of additional dimensions or time
+  row_name <- c(optional_dimensions, time_var)
+  checkmate::assert_subset(
+    x         = l[["meta"]][["percent_var"]], 
+    choices   = row_name,
+    empty.ok  = FALSE
+  )
+  
   g <- 
     l %>% 
     plot_trajectory(
