@@ -52,8 +52,13 @@ ds1 <-
     ,quarter = lubridate::quarter(date)
     ,quarter_fiscal = quarter - 1
     ,quarter_fiscal = ifelse(quarter_fiscal==0,4,quarter_fiscal)
+    ,year_date = as.Date(paste0(year,"-01-15"))
+    ,year_fiscal_date = as.Date(paste0(year_fiscal,"-04-15"))
+    ,quarter_date = paste(year,(quarter*3-1),"15", sep="-") %>% as.Date()
+    ,quarter_fiscal_date = quarter_date
   )
 ds1 |> look_for()
+ds1 %>% select(starts_with(c("quarter","year"))) 
 
 
 # ------ graph-5 ---------------------------------------------------------------
