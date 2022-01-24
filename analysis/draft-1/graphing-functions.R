@@ -322,7 +322,7 @@ prep_plot_trajectory <- function(
   #   &
   #   (!any(c(color_var, vfacet_var, hfacet_var))==total_var)
   #   ){
-  #   print("`total_var` must be one of the additional demensions")
+  #   print("`total_var` must be one of the additional dimensions")
   # }
   # `total_var` must be one of the provided dimensions
   optional_dimensions <- c(color_var, vfacet_var, hfacet_var)
@@ -335,7 +335,7 @@ prep_plot_trajectory <- function(
   }
 
   
-  l <- 
+  l <-
     d %>% 
     prep_data_trajectory(
       outcome_var    = outcome_var# outcome of interest (binary or continuous)
