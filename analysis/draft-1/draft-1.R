@@ -52,13 +52,37 @@ ds1 <-
     ,quarter = lubridate::quarter(date)
     ,quarter_fiscal = quarter - 1
     ,quarter_fiscal = ifelse(quarter_fiscal==0,4,quarter_fiscal)
-    ,year_date = as.Date(paste0(year,"-01-15"))
-    ,year_fiscal_date = as.Date(paste0(year_fiscal,"-04-15"))
+    ,year_date = as.Date(paste0(year,"-01-01"))
+    ,year_fiscal_date = as.Date(paste0(year_fiscal,"-04-01"))
     ,quarter_date = paste(year,(quarter*3-1),"15", sep="-") %>% as.Date()
     ,quarter_fiscal_date = quarter_date
   )
 ds1 |> look_for()
 ds1 %>% select(starts_with(c("quarter","year"))) 
+
+
+# ------ graph-6 ---------------------------------------------------------------
+# study in using dates on X-asis and applying axis labels
+
+g <- 
+  ds1 %>% 
+  prep_plot_trajectory(
+    outcome_var    = "employed"   # outcome of interest (binary or continuous)
+    ,y_var         = "cell_count" # cell_count, cell_prop
+    ,time_var      = "quarter_date"       # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"
+    # ,color_var   = "gender"
+    # ,vfacet_var  = "race"
+    # ,hfacet_var  = "gender"
+    # ,percent_var = "gender" # gender, race, age
+    # ,total_var   = "race" # gender, race, age
+    # ,facet       = "grid"
+    # ,scale_mode  = "free"
+  )
+# g 
+g +
+  scale_x_date(date_labels = "%y", breaks = "3 months", minor_breaks = "3 months")+
+  geom_text(aes(label = lubridate::quarter(quarter_date)),vjust=-1)
 
 
 # ------ graph-5 ---------------------------------------------------------------
