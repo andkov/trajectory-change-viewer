@@ -45,35 +45,33 @@ percent_var_i    = "gender" # "percent from" will represent share from this cate
 prep_data_trajectory <- function(
   d
   # mandatory arguments
-  ,outcome_var          # = "employed" # variable used for binning into age groups (default = years of age)
-  ,time_var             # = "year_fiscal"
-  ,count_var            # = "id"
+  ,outcome_var          # outcome of interest (binary or continuous)
+  ,time_var             # quarter, year, quarter_fiscal, year_fiscal
+  ,count_var            # unique row ids used to compute `cell_count`
   # optional arguments
-  ,color_var     = NULL # = "gender"
-  ,vfacet_var = NULL # = "race"
-  ,hfacet_var = NULL # = "age"
-  ,total_var = NULL # = vfacet_var # new group "Total" will be inserted into this variable, summing across others
-  ,percent_var   = NULL # = color_var # "percent from" will represent share from this category
+  ,color_var   = NULL # creates multiple lines,     color = levels of this variable
+  ,vfacet_var  = NULL # creates rows of cells,        row = levels of this variable
+  ,hfacet_var  = NULL # creates columns of cells,  column = levels of this variable
+  ,total_var   = NULL # adds "Total" as new level of this v., must be one of used dimensions (color, row, column)
+  ,percent_var = NULL # "percent from ____" will represent share from this variable,  must be one of used dimensions (color, row, column) or TIMEVAR
   # prep level specific defaults
   # ,forecast_var = "cell_count"
 ){
+  # categorical variable: gender, age, race. Replace with NULL to mask out
   # browser()
   # d <- ds1
-  # outcome_var    = "employed" # variable used for binning into age groups (default = years of age)
-  # time_var       = "year_fiscal"
-  # count_var      = "id" # unique row ids used to compute `cell_count`
-  # color_var      = "gender"
-  # vfacet_var  = "age"              # rows
-  # hfacet_var  = "race" # columns
-  # total_var  =  NULL # group "Total" added, summing across others
-  # percent_var    = "gender" # "percent from ____" will represent share from this category
-  # # prep level specific defaults
-  #
-  # browser()
-  # if(is.null(percent_var)){
-  #   percent_var <- 
-  # }
-  
+  # ## mandatory arguments
+  # outcome_var = "employed"   # outcome of interest (binary or continuous)
+  # time_var    = "year_fiscal"# quarter, year, quarter_fiscal, year_fiscal
+  # count_var   = "id"         # unique row ids used to compute `cell_count`
+  # ## optional arguments
+  # color_var   = NULL         # default = NULL; e.g. gender, age, race 
+  # vfacet_var  = NULL         # default = NULL; e.g. gender, age, race 
+  # hfacet_var  = NULL         # default = NULL; e.g. gender, age, race 
+  # total_var   = NULL         # default = NULL; e.g. gender, age, race 
+  # percent_var = NULL         # default = NULL; e.g. color, row, column or TIMEVAR
+
+
   (row_name           <- c(color_var, vfacet_var, hfacet_var) %>% unique())
   (most_granular_vars <- c(time_var, row_name)                         %>% unique())
   (total_group_vars   <- setdiff(most_granular_vars, total_var) %>% unique())
@@ -208,6 +206,9 @@ plot_trajectory <- function(
   ,scale_mode  = "free_y"
 ){
   # browser()
+  # `prep_data_trajectory()` creates list object `l` passed to `plot_trajectory`
+  # l$data # micro data used for plotting
+  # l$meta # inherited options and arguments stored as vectors
   
   #### VARIABLES AND SYMBOLS ####
   # time_sym      <- rlang::sym( l[["meta"]][["time_var"]]      )
