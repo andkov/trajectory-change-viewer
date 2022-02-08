@@ -1,4 +1,4 @@
-# ----- colors ------------------------------------------------------
+# ----- colors -------------------------------------------------------
 # High contrast colorblind safe palette for binary variable:
 # https://colorbrewer2.org/#type=diverging&scheme=PuOr&n=3
 binary_colors <- c(

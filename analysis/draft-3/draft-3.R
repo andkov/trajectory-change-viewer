@@ -6,7 +6,7 @@ cat("Working directory: ", getwd()) # Must be set to Project Directory
 # if the line above DOES NOT generates the project root, re-map by selecting
 # Session --> Set Working Directory --> To Project Directory location
 # Project Directory should be the root by default unless overwritten
-
+# This script started as a copy of `draft-2`
 # ---- load-sources ------------------------------------------------------------
 source("./scripts/common-functions.R")
 source("./scripts/operational-functions.R")
