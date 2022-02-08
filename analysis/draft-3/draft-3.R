@@ -49,12 +49,12 @@ ds1 <-
   ds0 |>
   # select(date) %>% # turn ON for inspection, OFF for use
   mutate(
-    year                 = lubridate::year(date)
+    year                 = lubridate::year(date) %>% as.integer()
     # ,yearmon             = tsibble::yearmonth(date) # not supported by look_for()
     ,year_fiscal         = compute_fiscal_year(date)
     ,quarter             = lubridate::quarter(date)
-    ,quarter_fiscal      = quarter - 1
-    ,quarter_fiscal      = ifelse(quarter_fiscal==0,4,quarter_fiscal)
+    ,quarter_fiscal      = (quarter - 1) 
+    ,quarter_fiscal      = ifelse(quarter_fiscal==0,4,quarter_fiscal)%>% as.integer()
     ,year_date           = as.Date(paste0(year,"-01-01"))
     ,year_fiscal_date    = as.Date(paste0(year_fiscal,"-04-01"))
     ,quarter_date        = paste(year,(quarter*3-1),"15", sep="-") %>% as.Date()
