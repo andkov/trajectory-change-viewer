@@ -201,10 +201,12 @@ prep_data_trajectory <- function(
 # works with the product of `prep_data_trajectory()`
 plot_trajectory <- function(
   l
-  ,y_var       = "cell_prop" # cell_count or cell_prop
+  ,y_var       = c("cell_prop", "cell_count")
   ,facet       = "grid"
   ,scale_mode  = "free_y"
 ){
+  checkmate::assert_subset(y_var, choices = c("cell_prop", "cell_count"), empty.ok = FALSE)
+  
   # browser()
   # `prep_data_trajectory()` creates list object `l` passed to `plot_trajectory`
   # l$data # micro data used for plotting
@@ -219,18 +221,18 @@ plot_trajectory <- function(
   hfacet_var    <- l[["meta"]][["hfacet_var"]]
   
   quo_to_sym <- function(x){
-    if(is.null(x)){
-      x <- NULL
-    }else{
-      x <- rlang::sym(x)
+    if (is.null(x)){
+      NULL
+    } else {
+      rlang::sym(x)
     }
   }
   
   y_sym      <- y_var %>% quo_to_sym()
   time_sym   <- l[["meta"]][["time_var"]]  %>% quo_to_sym()
-  color_sym  <- l[["meta"]][["color_var"]]  %>% quo_to_sym()
-  vfacet_sym <- vfacet_var %>% quo_to_sym()
-  hfacet_sym <- hfacet_var %>% quo_to_sym()
+  color_sym  <- l[["meta"]][["color_var"]] %>% quo_to_sym()
+  vfacet_sym <- vfacet_var                 %>% quo_to_sym()
+  hfacet_sym <- hfacet_var                 %>% quo_to_sym()
   
   #### SCAFFOLDING ####
   g <-
@@ -241,8 +243,8 @@ plot_trajectory <- function(
         ,y     = !!y_sym
         ,color = !!color_sym
         ,group = !!color_sym
-      ))+
-        geom_line()+
+      )) +
+        geom_line() +
         geom_point()
     }
   #### GRID or  WRAP ####
@@ -274,16 +276,21 @@ plot_trajectory <- function(
     title = "Caseload breakdown"
   )
   if(y_var == "cell_prop"){
-    g <- g + labs(
-      caption = paste0(
-        "Sum all levels of (", toupper(percent_var),") to get 100%"
+    g <- 
+      g + 
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+      labs(
+        caption = paste0(
+          "Sum all levels of (", toupper(percent_var),") to get 100%"
+        )
       )
-    )
-  }
-  if(y_var == "cell_count"){
-    g <- g + labs(
-      caption = "Values represent caseload count"
-    )
+  } else if(y_var == "cell_count"){
+    g <- 
+      g + 
+      scale_y_continuous(labels = scales::percent_comma()) +
+      labs(
+        caption = "Values represent caseload count"
+      )
   }
 
   return(g)
@@ -327,12 +334,12 @@ prep_plot_trajectory <- function(
   # }
   # `total_var` must be one of the provided dimensions
   optional_dimensions <- c(color_var, vfacet_var, hfacet_var)
-  if(!is.null(total_var)){
-  checkmate::assert_subset(
-    x         = total_var, 
-    choices   = optional_dimensions,
-    empty.ok  = FALSE
-  )
+  if (!is.null(total_var)){
+    checkmate::assert_subset(
+      x         = total_var, 
+      choices   = optional_dimensions,
+      empty.ok  = FALSE
+    )
   }
 
   
@@ -393,31 +400,4 @@ prep_plot_trajectory <- function(
 #     ,facet         = "grid"      # grid, wrap
 #     ,scale_mode    = "free"      # free, fixed, fixed_y, fixed_x
 #   )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

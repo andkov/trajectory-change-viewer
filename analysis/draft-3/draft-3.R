@@ -20,27 +20,29 @@ library(janitor)   # tidy data
 library(tidyr)     # data wrangling
 library(forcats)   # factors
 library(stringr)   # strings
+# library(stringi)   # strings
 library(lubridate) # dates
 library(explore)   # describe_all
 library(labelled)  # formats and look_for
 library(tsibble)   # time
+requireNamespace("fs") # https://fs.r-lib.org/articles/function-comparisons.html
 
 # ---- declare-globals ---------------------------------------------------------
 
 # ---- declare-functions -------------------------------------------------------
 # custom function for HTML tables
 prints_folder <- paste0("./analysis/draft-3/prints/")
-if(!file.exists(prints_folder)){
-  dir.create(file.path(prints_folder))
+if (!fs::dir_exists(prints_folder)) {
+  fs::dir_create(prints_folder)
 }
 
 # ---- load-data ---------------------------------------------------------------
 ds0 <- readr::read_rds("./data-public/raw/example-prosthetic-1.rds")
 
 # ---- inspect-data ------------------------------------------------------------
-ds0 |> glimpse()
-ds0 |> describe_all()
-ds0 |> look_for()
+ds0 |> pillar::glimpse()
+ds0 |> explore::describe_all()
+ds0 |> labelled::look_for()
 
 # Goal: show variation of binary response across a combo of categorical confounders
 
@@ -49,19 +51,21 @@ ds1 <-
   ds0 |>
   # select(date) %>% # turn ON for inspection, OFF for use
   mutate(
-    year                 = lubridate::year(date) %>% as.integer()
-    # ,yearmon             = tsibble::yearmonth(date) # not supported by look_for()
-    ,year_fiscal         = compute_fiscal_year(date)
-    ,quarter             = lubridate::quarter(date)
-    ,quarter_fiscal      = (quarter - 1) 
-    ,quarter_fiscal      = ifelse(quarter_fiscal==0,4,quarter_fiscal)%>% as.integer()
-    ,year_date           = as.Date(paste0(year,"-01-01"))
-    ,year_fiscal_date    = as.Date(paste0(year_fiscal,"-04-01"))
-    ,quarter_date        = paste(year,(quarter*3-1),"15", sep="-") %>% as.Date()
-    ,quarter_fiscal_date = quarter_date
+    year                = lubridate::year(date) %>% as.integer(),
+    # yearmon             = tsibble::yearmonth, # not supported by look_for()
+    year_fiscal         = compute_fiscal_year(date),
+    quarter             = lubridate::quarter(date),
+    quarter_fiscal      = (quarter - 1),
+    quarter_fiscal      = ifelse(quarter_fiscal==0,4,quarter_fiscal)%>% as.integer(),
+    year_date           = as.Date(paste0(year,"-01-01")),
+    year_fiscal_date    = as.Date(paste0(year_fiscal,"-04-01")),
+    quarter_date        = paste(year,(quarter*3-1),"15", sep="-") %>% as.Date(),
+    quarter_fiscal_date = quarter_date,
   )
-ds1 |> look_for()
-ds1 %>% distinct() %>% arrange(date) # inspection of date variables
+ds1 |> labelled::look_for()
+ds1 |> 
+  dplyr::distinct() |> 
+  dplyr::arrange(date) # inspection of date variables
 
 # ------ functions-separate ---------------------------------------------------------------
 # application of individual functions
@@ -82,14 +86,14 @@ ds1 %>% distinct() %>% arrange(date) # inspection of date variables
 l <- 
   ds1 %>% 
   prep_data_trajectory(
-    outcome_var    = "employed" # outcome of interest (binary or continuous)
-    ,time_var      = "year"     # quarter, year, quarter_fiscal, year_fiscal
-    ,count_var     = "id"       # unique row ids used to compute `cell_count`
-    ,color_var     = "gender"   # gender, age, race (categorical variable)
-    ,vfacet_var    = "age"   # gender, age, race (categorical variable)
-    ,hfacet_var    = "race"    # gender, age, race (categorical variable)
-    ,percent_var   = "race"    # must be one of the used dimensions (color, row, column)
-    # ,total_var     = "gender"     # must be one of the used dimensions (color, row, column)
+    outcome_var    = "employed"  # outcome of interest (binary or continuous)
+    ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"        # unique row ids used to compute `cell_count`
+    ,color_var     = "gender"    # gender, age, race (categorical variable)
+    ,vfacet_var    = "age"       # gender, age, race (categorical variable)
+    ,hfacet_var    = "race"      # gender, age, race (categorical variable)
+    # ,percent_var   = "race"      # must be one of the used dimensions (color, row, column)
+    # ,total_var     = "gender"    # must be one of the used dimensions (color, row, column)
   )
 # `prep_data_trajectory()` creates list object `l` passed to `plot_trajectory`
 l$data # micro data used for plotting
@@ -148,13 +152,13 @@ g +
 
 
 # ---- save-to-disk ------------------------------------------------------------
-path <- "./analysis/.../report-isolated.Rmd"
-rmarkdown::render(
-  input = path ,
-  output_format=c(
-    "html_document"
-    # "word_document"
-    # "pdf_document"
-  ),
-  clean=TRUE
-)
+# path <- "./analysis/.../report-isolated.Rmd"
+# rmarkdown::render(
+#   input = path ,
+#   output_format=c(
+#     "html_document"
+#     # "word_document"
+#     # "pdf_document"
+#   ),
+#   clean=TRUE
+# )
