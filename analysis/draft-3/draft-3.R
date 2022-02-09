@@ -151,6 +151,12 @@ g +
   scale_x_date(date_labels = "%y", breaks = "3 months", minor_breaks = "3 months")+
   geom_text(aes(label = lubridate::quarter(quarter_date)),vjust=-1)
 
+# TODO: considering clumping date: https://ouhscbbmc.github.io/OuhscMunge/reference/clump_date.html & https://github.com/OuhscBbmc/OuhscMunge/blob/main/R/dates.R
+# strftime(seq.Date(from = as.Date("2015-01-01"), to = as.Date("2020-12-31"), by = "month"), "%b\n%Y")
+# > strptime(x="28-2020-04", format="%d-%Y-%m")
+# [1] "2020-04-28 CDT"
+# > strptime(x="28-2020-Nov", format="%d-%Y-%b")
+# [1] "2020-11-28 CST"
 
 # ---- save-to-disk ------------------------------------------------------------
 # path <- "./analysis/.../report-isolated.Rmd"

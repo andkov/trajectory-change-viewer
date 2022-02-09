@@ -207,7 +207,9 @@ plot_trajectory <- function(
   ,lab_title   = "Caseload breakdown"
   ,lab_y       = NA_character_
 ){
-  checkmate::assert_subset(y_var, choices = c("cell_prop", "cell_count"), empty.ok = FALSE)
+  # TODO: check all input values
+  checkmate::assert_subset(   y_var, choices = c("cell_prop", "cell_count"), empty.ok = FALSE)
+  checkmate::assert_character(y_var, any.missing = FALSE, len = 1, pattern = "^cell_prop|cell_count$", null.ok = FALSE)
   
   # browser()
   # `prep_data_trajectory()` creates list object `l` passed to `plot_trajectory`
@@ -287,7 +289,7 @@ plot_trajectory <- function(
   } else if(y_var == "cell_count"){
     g <- 
       g + 
-      scale_y_continuous(labels = scales::percent_comma())
+      scale_y_continuous(labels = scales::comma_format())
     
     lab_y        <- dplyr::coalesce(lab_y, "Count")
     lab_caption  <- "Values represent caseload count"
