@@ -106,6 +106,7 @@ g <-
     ,scale_mode = "free"       # free, fixed, free_x, free_y
   )
 g
+# g + labs(title = "New Title")
 
 
 # ------ functions-combined ---------------------------------------------------------------

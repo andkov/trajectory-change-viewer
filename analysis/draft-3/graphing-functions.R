@@ -204,6 +204,8 @@ plot_trajectory <- function(
   ,y_var       = c("cell_prop", "cell_count")
   ,facet       = "grid"
   ,scale_mode  = "free_y"
+  ,lab_title   = "Caseload breakdown"
+  ,lab_y       = NA_character_
 ){
   checkmate::assert_subset(y_var, choices = c("cell_prop", "cell_count"), empty.ok = FALSE)
   
@@ -228,7 +230,7 @@ plot_trajectory <- function(
     }
   }
   
-  y_sym      <- y_var %>% quo_to_sym()
+  y_sym      <- y_var                      %>% quo_to_sym()
   time_sym   <- l[["meta"]][["time_var"]]  %>% quo_to_sym()
   color_sym  <- l[["meta"]][["color_var"]] %>% quo_to_sym()
   vfacet_sym <- vfacet_var                 %>% quo_to_sym()
@@ -271,29 +273,32 @@ plot_trajectory <- function(
         ,scales = scale_mode
       )
   }
+  
   #### ANNOTATIONS ####
-  g <- g + labs(
-    title = "Caseload breakdown"
-  )
-  if(y_var == "cell_prop"){
+
+  if (y_var == "cell_prop"){
     g <- 
       g + 
-      scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-      labs(
-        caption = paste0(
-          "Sum all levels of (", toupper(percent_var),") to get 100%"
-        )
-      )
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1)) 
+    
+    lab_y        <- dplyr::coalesce(lab_y, "Percent")
+    lab_caption  <- paste0("Sum all levels of (", toupper(percent_var),") to get 100%")
+      
   } else if(y_var == "cell_count"){
     g <- 
       g + 
-      scale_y_continuous(labels = scales::percent_comma()) +
-      labs(
-        caption = "Values represent caseload count"
-      )
+      scale_y_continuous(labels = scales::percent_comma())
+    
+    lab_y        <- dplyr::coalesce(lab_y, "Count")
+    lab_caption  <- "Values represent caseload count"
   }
-
-  return(g)
+  
+  g +
+    labs(
+      title   = lab_title,
+      y       = lab_y,
+      caption = lab_caption,
+    )
 }
 
 #
