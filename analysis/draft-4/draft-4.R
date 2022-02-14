@@ -126,8 +126,7 @@ l <-
     ,facet         = "grid" # grid, wrap
     ,scale_mode    = "free" # free, free_y, free_x, fixed
   )
-l$graph$graph
-
+l$graph
 
 # ------ study-dates ---------------------------------------------------------------
 # study in using dates on X-asis and applying axis labels

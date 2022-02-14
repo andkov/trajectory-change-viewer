@@ -386,7 +386,7 @@ prep_plot_trajectory <- function(
     )
   # browser()
   # g
-  l[["graph"]] <- g
+  l[["graph"]] <- g$graph
   return(l)
   
 }
