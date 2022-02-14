@@ -123,7 +123,7 @@ l <-
     ,hfacet_var    = "race" # gender, race, age
     ,percent_var   = "race" # gender, race, age
     ,total_var     = "gender" # gender, race, age
-    ,facet         = "wrap" # grid, wrap
+    ,facet         = "grid" # grid, wrap
     ,scale_mode    = "free" # free, free_y, free_x, fixed
   )
 l$graph$graph
