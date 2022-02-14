@@ -131,7 +131,12 @@ l$graph$graph
 
 # ------ study-dates ---------------------------------------------------------------
 # study in using dates on X-asis and applying axis labels
-
+axis_date_format <-  strftime(
+  seq.Date(from     = as.Date("2015-01-01")
+           , to     = as.Date("2020-12-31")
+           , by     = "month")
+           , format = "%b\n%Y"
+ )
 g <- 
   ds1 %>% 
   prep_plot_trajectory(
@@ -148,8 +153,9 @@ g <-
     # ,scale_mode  = "free"
   )
 # g 
-g +
-  scale_x_date(date_labels = "%y", breaks = "3 months", minor_breaks = "3 months")+
+g$graph$graph +
+  scale_x_date(date_labels = "%b\n%y", breaks = "6 months", minor_breaks = "3 months")+
+  # scale_x_date(date_labels = axis_date_format)+
   geom_text(aes(label = lubridate::quarter(quarter_date)),vjust=-1)
 
 # TODO: considering clumping date: https://ouhscbbmc.github.io/OuhscMunge/reference/clump_date.html & https://github.com/OuhscBbmc/OuhscMunge/blob/main/R/dates.R
