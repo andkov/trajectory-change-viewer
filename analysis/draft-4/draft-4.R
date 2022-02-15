@@ -141,7 +141,7 @@ g <-
   prep_plot_trajectory(
     outcome_var    = "employed"   # outcome of interest (binary or continuous)
     ,y_var         = "cell_count" # cell_count, cell_prop
-    ,time_var      = "quarter_date"       # quarter, year, quarter_fiscal, year_fiscal
+    ,time_var      = "date"       # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"
     # ,color_var   = "gender"
     # ,vfacet_var  = "race"
@@ -152,11 +152,36 @@ g <-
     # ,scale_mode  = "free"
   )
 # g 
-g$graph$graph +
-  scale_x_date(date_labels = "%b\n%y", breaks = "6 months", minor_breaks = "3 months")+
+g$graph +
+  scale_x_date(date_labels = "%b\n%Y", breaks = "6 months", minor_breaks = "3 months")#+
   # scale_x_date(date_labels = axis_date_format)+
-  geom_text(aes(label = lubridate::quarter(quarter_date)),vjust=-1)
+  # geom_text(aes(label = lubridate::quarter(year_fiscal)),vjust=-1)
 
+g$graph +
+  # scale_x_date(date_labels = "%b\n%Y", breaks = pretty(g$data$year_fiscal_date))
+  scale_x_date(date_labels = "%b\n%Y", breaks = pretty(g$data$date))
+
+g$graph +
+  # scale_x_date(date_labels = "%b\n%Y", breaks = pretty(g$data$year_fiscal_date))
+  scale_x_date(date_labels = "%b\n%Y", breaks = ggplot2::waiver())
+
+fx_with_custom_breaks <- function(g, date_labels = "%Y\n%b", x_date_breaks = ggplot2::waiver()) {
+  g +
+    scale_x_date(
+      date_labels = date_labels,
+      breaks      = x_date_breaks
+    )
+}
+
+fx_with_custom_breaks(g$graph)
+fx_with_custom_breaks(g$graph, date_labels = "%b\n%Y")
+breaks_1 <- seq.Date(as.Date("2012-12-05"),  as.Date("2015-11-03"), by="2 months") #Example of poorly-chose
+fx_with_custom_breaks(g$graph, x_date_breaks = breaks_1)
+
+breaks_2 <- pretty(as.Date(c("2013-12-05", "2015-11-03"))) 
+fx_with_custom_breaks(g$graph, x_date_breaks = breaks_2)
+
+  
 # TODO: considering clumping date: https://ouhscbbmc.github.io/OuhscMunge/reference/clump_date.html & https://github.com/OuhscBbmc/OuhscMunge/blob/main/R/dates.R
 # strftime(seq.Date(from = as.Date("2015-01-01"), to = as.Date("2020-12-31"), by = "month"), "%b\n%Y")
 # > strptime(x="28-2020-04", format="%d-%Y-%m")
