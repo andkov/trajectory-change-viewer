@@ -48,6 +48,7 @@ prep_data_trajectory <- function(
   ,outcome_var          # outcome of interest (binary or continuous)
   ,time_var             # quarter, year, quarter_fiscal, year_fiscal
   ,count_var            # unique row ids used to compute `cell_count`
+  ,weight_var
   # optional arguments
   ,color_var   = NULL # creates multiple lines,     color = levels of this variable
   ,vfacet_var  = NULL # creates rows of cells,        row = levels of this variable
@@ -62,13 +63,13 @@ prep_data_trajectory <- function(
   # d <- ds1
   # ## mandatory arguments
   # outcome_var = "employed"   # outcome of interest (binary or continuous)
-  # time_var    = "year_fiscal"# quarter, year, quarter_fiscal, year_fiscal
+  # time_var    = "year"# quarter, year, quarter_fiscal, year_fiscal
   # count_var   = "id"         # unique row ids used to compute `cell_count`
   # ## optional arguments
-  # color_var   = NULL         # default = NULL; e.g. gender, age, race 
-  # vfacet_var  = NULL         # default = NULL; e.g. gender, age, race 
-  # hfacet_var  = NULL         # default = NULL; e.g. gender, age, race 
-  # total_var   = NULL         # default = NULL; e.g. gender, age, race 
+  # color_var   = NULL         # default = NULL; e.g. gender, age, race
+  # vfacet_var  = NULL         # default = NULL; e.g. gender, age, race
+  # hfacet_var  = NULL         # default = NULL; e.g. gender, age, race
+  # total_var   = NULL         # default = NULL; e.g. gender, age, race
   # percent_var = NULL         # default = NULL; e.g. color, row, column or TIMEVAR
 
 
@@ -77,24 +78,29 @@ prep_data_trajectory <- function(
   (total_group_vars   <- setdiff(most_granular_vars, total_var) %>% unique())
   # if no `percent_var` is given, defaults to first non-missing dimension
   if(is.null(percent_var)){percent_var <- (c(row_name,time_var))[1]}
-  
+
   (percent_from_vars  <- setdiff(most_granular_vars, percent_var)   %>% unique())
-  
+
   get_custom_summary <- function(xd){
     # in current form, functions supports BINARY and NUMERIC outcomes
     xd %>%
-      mutate(across(outcome_var %>% all_of(), as.numeric)) %>% 
+      mutate(across(outcome_var %>% all_of(), as.numeric)) %>%
       summarize(
-        cell_count      = n_distinct(!!rlang::sym(count_var))
-        ,outcome_median = median(!!rlang::sym(outcome_var),na.rm = T )
-        ,outcome_mean   = mean(  !!rlang::sym(outcome_var),na.rm = T )
+        # cell_count      = n_distinct(!!rlang::sym(count_var)) # count of respondents
+        cell_count      = sum(!!rlang::sym(weight_var), na.rm = T) # sum of weights, count of population
+        ,outcome_median = isotone::weighted.median(y = !!rlang::sym(outcome_var), w = !!rlang::sym(weight_var) )
+        ,outcome_mean   =   stats::weighted.mean(  x = !!rlang::sym(outcome_var), w = !!rlang::sym(weight_var),na.rm = T )
+
+        # ,outcome_median = median(!!rlang::sym(outcome_var),na.rm = T )
+        # ,outcome_mean   = mean(  !!rlang::sym(outcome_var),na.rm = T )
+        #
         ,.groups        = "drop"
       ) %>%
       ungroup() %>%
       mutate(across(where(is.factor), fct_drop)) # only non-empty levels
   }
   # browser()
-  
+
   #### STEP 1 - row counts at most granular level
   d1 <-
     d %>%
@@ -115,7 +121,7 @@ prep_data_trajectory <- function(
     d12 <- d1 # if Total is not requested, we leave d1 as is
   }
   #### STEP 3 - Compute percent
-  d3 <- 
+  d3 <-
     d12 %>%
     group_by_at(vars(all_of(  percent_from_vars  ))
     ) %>%
@@ -146,7 +152,7 @@ prep_data_trajectory <- function(
   #     )
   # d4
   # d_out <- d4
-  
+
   ls_out <- list(
     # "data" = d4
     "data" = d_out
@@ -204,26 +210,26 @@ plot_trajectory <- function(
   ,y_var       = c("cell_prop", "cell_count")
   ,facet       = "grid"
   ,scale_mode  = "free_y"
-  ,lab_title   = "Caseload breakdown"
+  ,lab_title   = "Rate of "
   ,lab_y       = NA_character_
 ){
   # TODO: check all input values
-  checkmate::assert_subset(   y_var, choices = c("cell_prop", "cell_count"), empty.ok = FALSE)
-  checkmate::assert_character(y_var, any.missing = FALSE, len = 1, pattern = "^cell_prop|cell_count$", null.ok = FALSE)
-  
+  checkmate::assert_subset(   y_var, choices = c("cell_prop", "cell_count","outcome_mean","outcome_median"), empty.ok = FALSE)
+  checkmate::assert_character(y_var, any.missing = FALSE, len = 1, pattern = "^cell_prop|cell_count|outcome_mean|outcome_median$", null.ok = FALSE)
+
   # browser()
   # `prep_data_trajectory()` creates list object `l` passed to `plot_trajectory`
   # l$data # micro data used for plotting
   # l$meta # inherited options and arguments stored as vectors
-  
+
   #### VARIABLES AND SYMBOLS ####
   # time_sym      <- rlang::sym( l[["meta"]][["time_var"]]      )
   # y_sym         <- rlang::sym( y_var                          )
-  # color_sym     <- rlang::sym( l[["meta"]][["color_var"]]     ) 
+  # color_sym     <- rlang::sym( l[["meta"]][["color_var"]]     )
   percent_var   <- l[["meta"]][["percent_var"]]
   vfacet_var    <- l[["meta"]][["vfacet_var"]]
   hfacet_var    <- l[["meta"]][["hfacet_var"]]
-  
+
   quo_to_sym <- function(x){
     if (is.null(x)){
       NULL
@@ -231,13 +237,13 @@ plot_trajectory <- function(
       rlang::sym(x)
     }
   }
-  
+
   y_sym      <- y_var                      %>% quo_to_sym()
   time_sym   <- l[["meta"]][["time_var"]]  %>% quo_to_sym()
   color_sym  <- l[["meta"]][["color_var"]] %>% quo_to_sym()
   vfacet_sym <- vfacet_var                 %>% quo_to_sym()
   hfacet_sym <- hfacet_var                 %>% quo_to_sym()
-  
+
   #### SCAFFOLDING ####
   g <-
     l$data %>%
@@ -254,7 +260,7 @@ plot_trajectory <- function(
   #### GRID or  WRAP ####
   # browser
   if(facet == "grid"){
-    g <- 
+    g <-
       g +
       facet_grid(
         rows    = vars( !!vfacet_sym )
@@ -263,7 +269,7 @@ plot_trajectory <- function(
       )
   }
   if(facet == "wrap"){
-    g <- 
+    g <-
       g +
       facet_wrap(
         facets  = c(vfacet_var, hfacet_var)
@@ -275,30 +281,44 @@ plot_trajectory <- function(
         ,scales = scale_mode
       )
   }
-  
+
   #### ANNOTATIONS ####
 
   if (y_var == "cell_prop"){
-    g <- 
-      g + 
-      scale_y_continuous(labels = scales::percent_format(accuracy = 1)) 
-    
+    g <-
+      g +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+
     lab_y        <- dplyr::coalesce(lab_y, "Percent")
     lab_caption  <- paste0("Sum all levels of (", toupper(percent_var),") to get 100%")
-      
+
   } else if(y_var == "cell_count"){
-    g <- 
-      g + 
+    g <-
+      g +
       scale_y_continuous(labels = scales::comma_format())
-    
+
     lab_y        <- dplyr::coalesce(lab_y, "Count")
     lab_caption  <- "Values represent caseload count"
+  } else if(y_var == "outcome_mean"){
+    g <-
+      g +
+      scale_y_continuous(labels = scales::comma_format())
+
+    lab_y        <- dplyr::coalesce(lab_y, "Mean")
+    lab_caption  <- "Values represent mean of the outcome"
+  } else if(y_var == "outcome_median"){
+    g <-
+      g +
+      scale_y_continuous(labels = scales::comma_format())
+
+    lab_y        <- dplyr::coalesce(lab_y, "Median")
+    lab_caption  <- "Values represent meadian of the outcome"
   }
-  
-  g <- 
+
+  g <-
     g +
     labs(
-      title   = lab_title,
+      title   = paste0(lab_title," (",toupper(l$meta$outcome_var),") in the population"),
       y       = lab_y,
       caption = lab_caption,
     )
@@ -318,14 +338,15 @@ plot_trajectory <- function(
 # ----- prep-plot-trajectory --------------------------------------------------
 
 
-prep_plot_trajectory <- function(
+make_trajectory <- function(
   d
   ,outcome_var    # outcome of interest (binary or continuous)
   ,y_var         # cell_count, cell_prop
   ,time_var      # quarter, year, quarter_fiscal, year_fiscal
   ,count_var     # unique row identifier
-  # three optional dimensions 
-  ,color_var   = NULL    # color 
+  ,weight_var = 1L
+  # three optional dimensions
+  ,color_var   = NULL    # color
   ,vfacet_var  = NULL   # facet rows on this variable
   ,hfacet_var  = NULL # facet columns on this variable
   ,percent_var = NULL    # selected from optional dimensions (not NULL)
@@ -347,15 +368,15 @@ prep_plot_trajectory <- function(
   optional_dimensions <- c(color_var, vfacet_var, hfacet_var)
   if (!is.null(total_var)){
     checkmate::assert_subset(
-      x         = total_var, 
+      x         = total_var,
       choices   = optional_dimensions,
       empty.ok  = FALSE
     )
   }
 
-  
+
   l <-
-    d %>% 
+    d %>%
     prep_data_trajectory(
       outcome_var    = outcome_var# outcome of interest (binary or continuous)
       ,time_var      = time_var     # quarter, year, quarter_fiscal, year_fiscal
@@ -366,19 +387,19 @@ prep_plot_trajectory <- function(
       ,percent_var   = percent_var
       ,total_var     = total_var
     )
-  # l$data 
+  # l$data
   # l$meta$percent_var
-  # graph production from dto (list) 
+  # graph production from dto (list)
   # `percent_var` must be one of additional dimensions or time
   row_name <- c(optional_dimensions, time_var)
   checkmate::assert_subset(
-    x         = l[["meta"]][["percent_var"]], 
+    x         = l[["meta"]][["percent_var"]],
     choices   = row_name,
     empty.ok  = FALSE
   )
-  
-  g <- 
-    l %>% 
+
+  g <-
+    l %>%
     plot_trajectory(
       y_var       = y_var # cell_prop, cell_count
       ,facet      = facet # wrap, grid
@@ -388,20 +409,20 @@ prep_plot_trajectory <- function(
   # g
   l[["graph"]] <- g$graph
   return(l)
-  
+
 }
 # how to use
-# ds1 %>% 
-#   prep_plot_trajectory(
+# ds1 %>%
+#   make_trajectory(
 #     outcome_var    = "employed"  # outcome of interest (binary or continuous)
 #     ,y_var         = "cell_prop" # cell_count, cell_prop
 #     ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
 #     ,count_var     = "id"        # unique row identifier
-#     # three optional dimensions 
-#     ,color_var  = "gender"    # color 
+#     # three optional dimensions
+#     ,color_var  = "gender"    # color
 #     ,vfacet_var = "race"      # facet rows on this variable
 #     ,hfacet_var = "age"       # facet columns on this variable
-#                                  # sum `percent_var` to get 100% 
+#                                  # sum `percent_var` to get 100%
 #     # ,percent_var   = "gender"  # selected from optional dimensions (not NULL)
 #     # ,percent_var   = "race"    # selected from optional dimensions (not NULL)
 #     ,percent_var   = "gender"    # selected from optional dimensions (not NULL)
@@ -409,7 +430,7 @@ prep_plot_trajectory <- function(
 #     # ,total_var = "gender"  # selected from optional dimensions (not NULL)
 #     # ,total_var = "age"     # selected from optional dimensions (not NULL)
 #     # ,total_var = "race"    # selected from optional dimensions (not NULL)
-#     
+#
 #     ,facet         = "grid"      # grid, wrap
 #     ,scale_mode    = "free"      # free, fixed, fixed_y, fixed_x
 #   )
