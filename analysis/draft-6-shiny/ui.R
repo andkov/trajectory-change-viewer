@@ -29,7 +29,7 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
     '<div id="logo">
       <a href="http://oklahomatfcbt.org/"><img src="images/cropped-OK_TF-CBT_logo_v9_1_1_a_1.png" width="450" height="150" alt="Oklahoma TF-CBT"/></a>
     </div>'
-  )
+  ),
 #   fluidRow(
 #     column(width = 9, 
 #       selectizeInput(
@@ -58,20 +58,20 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
 #       )
 #     )      
 #   ), #End fluid row with the tag & client_number dropdown boxes
-#   tabsetPanel( type = "tabs",
-#     tabPanel(
-#       title = "TF-CBT Session Tracking", 
-#       HTML("Therapy session for the <em>therapist</em> and <em>client</em> selected above.  If you're just exploring, therapist `wfv3` is a good illustration.<br/><br/>"),
-#       # Create a new row for the table.
-#       fluidRow(
-#         dataTableOutput(outputId = "ItemProgressTable")
-#       ), #End fluid row with the Group Call table
-#       HTML('<br/>If you believe any of the data reported to be inaccurate, please email us at <a href="mailto:OKTF-CBT@ouhsc.edu">OKTF-CBT@ouhsc.edu</a> and include any supporting documentation available to you so we might investigate the discrepancy promptly.<br/><br/></a>'),
+  tabsetPanel( type = "tabs",
+    tabPanel(
+      title = "TF-CBT Session Tracking", 
+      HTML("Therapy session for the <em>therapist</em> and <em>client</em> selected above.  If you're just exploring, therapist `wfv3` is a good illustration.<br/><br/>"),
+      # Create a new row for the table.
+      fluidRow(
+        dataTableOutput(outputId = "survey_dt")
+      ), #End fluid row with the Group Call table
+      HTML('<br/>If you believe any of the data reported to be inaccurate, please email us at <a href="mailto:OKTF-CBT@ouhsc.edu">OKTF-CBT@ouhsc.edu</a> and include any supporting documentation available to you so we might investigate the discrepancy promptly.<br/><br/></a>'),
       
 #       HTML('&copy; 2014 <a href="http://oklahomatfcbt.org/" title="Oklahoma TF-CBT" class="accent">Oklahoma TF-CBT</a>'),
 #       shiny::icon("code"), #This is a little cheat to get the table icons work
-#       HTML('Software for data collection and reporting developed by <a href="http://www.ouhsc.edu/BBMC/" class="accent">OUHSC BBMC</a> <a href="https://github.com/OuhscBbmc/" class="accent"><i class="fa fa-github"></i></a>')
-#     ), #End the (first) tab with the Group Call table
+      HTML('Software for data collection and reporting developed by <a href="http://www.ouhsc.edu/BBMC/" class="accent">OUHSC BBMC</a> <a href="https://github.com/OuhscBbmc/" class="accent"><i class="fa fa-github"></i></a>')
+    ) #End the (first) tab with the Group Call table
 #     tabPanel(
 #       title = "Therapist Training", 
 #       HTML(
@@ -108,5 +108,5 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
 #       title = "Details",
 #       htmlOutput(outputId='table_file_info')
 #     ) #End the (third) tab with the debugging details
-#   ) #End the tabsetPanel
+  ) #End the tabsetPanel
 )) #End the fluidPage and shinyUI
