@@ -31,16 +31,10 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
     </div>'
   ),
   fluidRow(
-    # column(width = 9, 
-    #   selectizeInput(
-    #     inputId="agency_names", label="Filter by Agency Name(s):", width="100%", multiple=TRUE,
-    #     choices=c("--All--", sort(unique(as.character(ds_survey$employed))))        
-    #   )
-    # ),
     column(width = 3, 
       selectizeInput(
         inputId="employed_codes", label="Filter by Employment:", width="100%", multiple=TRUE,
-        choices=c("--All--", sort(unique(as.character(ds_survey$employed))))
+        choices=c("--All--", sort(unique(as.character(ds_survey_all$employed))))
       )
     )      
   ), #End fluid row with the agency & call group dropdown boxes
@@ -71,7 +65,7 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
 #       HTML('&copy; 2014 <a href="http://oklahomatfcbt.org/" title="Oklahoma TF-CBT" class="accent">Oklahoma TF-CBT</a>'),
 #       shiny::icon("code"), #This is a little cheat to get the table icons work
       HTML('Software for data collection and reporting developed by <a href="http://www.ouhsc.edu/BBMC/" class="accent">OUHSC BBMC</a> <a href="https://github.com/OuhscBbmc/" class="accent"><i class="fa fa-github"></i></a>')
-    ) #End the (first) tab with the Group Call table
+    ), #End the (first) tab with the Group Call table
 #     tabPanel(
 #       title = "Therapist Training", 
 #       HTML(
@@ -104,9 +98,9 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
 #       "Tracking symptom severity over the life of the TF-CBT case. Trainers suggest, at a minimum, administering pre-treatment and post-treatment trauma measures.",
 #       plotOutput(outputId='trauma_symptoms', width='95%', height='400px')
 #     ), #End the (third) tab with the symptoms
-#     tabPanel(
-#       title = "Details",
-#       htmlOutput(outputId='table_file_info')
-#     ) #End the (third) tab with the debugging details
+    tabPanel(
+      title = "Details",
+      htmlOutput(outputId='table_file_info')
+    ) #End the (third) tab with the debugging details
   ) #End the tabsetPanel
 )) #End the fluidPage and shinyUI

@@ -84,53 +84,8 @@ shinyServer( function(input, output, session) {
   # 
   output$survey_dt <- renderDataTable({
     # Filter Client Progress data based on selections
-    d <- ds_survey
-    # d_session_long <- dsSessionSurvey
-    # 
-    # if( input$therapist_tag != "response not possible" ) {
-    #   d <- d[d$therapist_tag == input$therapist_tag, ]
-    #   d_session_long <- d_session_long[d_session_long$therapist_tag == input$therapist_tag, ]
-    # }
-    # if( input$client_number > 0 ) {
-    #   d <- d[d$client_number == input$client_number, ]
-    #   d_session_long <- d_session_long[d_session_long$client_number == input$client_number, ]
-    # }
-    # 
-    # 
-    # unknown_attendence          <- d_session_long[is.na(d_session_long$client_attend), ]$session_number
-    # no_attendence               <- d_session_long[!d_session_long$client_attend, ]$session_number
-    # 
-    # d_attend_long               <- d_session_long[, c("client_attend"), drop=F]
-    # d_attend_long$client_attend <- ifelse(is.na(d_attend_long$client_attend), "?", d_attend_long$client_attend)
-    # d_attend_long$client_attend <- plyr::revalue(as.character(d_attend_long$client_attend), c("TRUE"="Y", "FALSE"="N"), warn_missing=F)
-    # d_attend                    <- as.data.frame(t(d_attend_long$client_attend))
-    # 
-    # colnames(d_attend)          <- sprintf("session_%02i", d_session_long$session_number)
-    # sessions_unknown_attendence <- sprintf("session_%02i", unknown_attendence)
-    # sessions_no_attendence      <- sprintf("session_%02i", no_attendence)
-    # 
-    # d_attend$description_html   <- '<p class="accent flush">Client Attended'
-    # d_attend$variable_index     <- -1L
-    # d_attend$branch_item        <- 0L
-    # 
-    # d <- as.data.frame(d) # Hack so the loop below works
-    # for( session_item in sort(grep("^session_(\\d{2})$", colnames(d), value=T, perl=T)) ) {
-    #   check    <- sprintf('<i class="fa fa-check-circle accent" title="%s"></i>', gsub("_", " ", session_item))
-    #   uncheck  <- sprintf('<i class="fa fa-circle-o semihide" title="%s"></i>', gsub("_", " ", session_item))
-    #   question <- sprintf('<i class="fa fa-question semihide" title="%s"></i>', gsub("_", " ", session_item))
-    # 
-    #   d[, session_item] <- ifelse(d[, session_item], check, uncheck)
-    # 
-    #   if( all(is.na(d[, session_item])) ) {
-    #     d[, session_item] <- NULL
-    #   } else if( session_item %in% sessions_no_attendence ) {
-    #     d[, session_item] <- ""
-    #   } else if( session_item %in% sessions_unknown_attendence ) {
-    #     d[, session_item] <- question
-    #   }
-    # }
-    # rm(unknown_attendence, no_attendence, sessions_unknown_attendence, sessions_no_attendence)
-    # 
+    d <- ds_survey()
+
     # if( length(d$description_html) > 0 )
     #   d$description_html <- paste0('<p class="hanging">', d$description_html)
     # 
@@ -279,12 +234,12 @@ shinyServer( function(input, output, session) {
   # })
   # 
   output$table_file_info <- renderText({
-    return( paste0(
+    paste0(
       "<table>",
       # "<tr><td>Data Path:&nbsp;<td/><td>", determine_directory(), "<td/><tr/>",
-      "<tr><td>Survey Last Modified:&nbsp;<td/><td>", file.info(path_survey)$mtime, "<td/><tr/>",
+      # "<tr><td>Survey Last Modified:&nbsp;<td/><td>", file.info(path_survey)$mtime, "<td/><tr/>",
       # "<tr><td>App Restart Time:&nbsp;<td/><td>", file.info("restart.txt")$mtime, "<td/><tr/>",
       "<table/>"
-    ) )
+    )
   })
 })
