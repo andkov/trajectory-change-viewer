@@ -42,5 +42,5 @@ load_survey <- function( ) {
 
 # load_data   -----------------------------------
 system.time({
-  ds_survey <- load_survey()
+  ds_survey_all <- load_survey()
 })

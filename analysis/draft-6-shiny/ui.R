@@ -30,20 +30,20 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
       <a href="http://oklahomatfcbt.org/"><img src="images/cropped-OK_TF-CBT_logo_v9_1_1_a_1.png" width="450" height="150" alt="Oklahoma TF-CBT"/></a>
     </div>'
   ),
-#   fluidRow(
-#     column(width = 9, 
-#       selectizeInput(
-#         inputId="agency_names", label="Filter by Agency Name(s):", width="100%", multiple=TRUE,
-#         choices=c("--All--", sort(unique(as.character(dsItemProgress$agency_name))))        
-#       )
-#     ),
-#     column(width = 3, 
-#       selectizeInput(
-#         inputId="call_group_codes", label="Filter by Call Group(s):", width="100%", multiple=TRUE,
-#         choices=c("--All--", sort(unique(as.character(dsItemProgress$call_group_code))))
-#       )
-#     )      
-#   ), #End fluid row with the agency & call group dropdown boxes
+  fluidRow(
+    # column(width = 9, 
+    #   selectizeInput(
+    #     inputId="agency_names", label="Filter by Agency Name(s):", width="100%", multiple=TRUE,
+    #     choices=c("--All--", sort(unique(as.character(ds_survey$employed))))        
+    #   )
+    # ),
+    column(width = 3, 
+      selectizeInput(
+        inputId="employed_codes", label="Filter by Employment:", width="100%", multiple=TRUE,
+        choices=c("--All--", sort(unique(as.character(ds_survey$employed))))
+      )
+    )      
+  ), #End fluid row with the agency & call group dropdown boxes
 #   fluidRow(
 #     column(width = 9, 
 #       selectInput(

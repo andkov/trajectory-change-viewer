@@ -1,10 +1,10 @@
-# load_packages  -----------------------------------
+# load-packages  -----------------------------------
 library(shiny)
 # library(ggplot2)
 requireNamespace("dplyr", quietly=FALSE)
 requireNamespace("DT", quietly=FALSE) # DataTables (a jQuery library)
 
-# declare_globals  -----------------------------------
+# declare-globals  -----------------------------------
 
 # Define a server for the Shiny app
 shinyServer( function(input, output, session) {
@@ -25,40 +25,46 @@ shinyServer( function(input, output, session) {
   # # Create the DataTables objects (a jQuery library)  -----------------------------------
   # 
   # Display only the therapists in the selected agencies and call groups (if any are specified)
-  observe({
-    d_survey <- ds_survey
-
-    # if( (is.null(input$agency_names)) | ("--All--" %in% input$agency_names) ) {
-    #   #Don't filter the pool based on agency if nothing or everything is specified.
-    # } else {
-    #   d_pool <- d_pool %>%
-    #     dplyr::filter(agency_name %in% input$agency_names)
-    # }
-    # 
-    # if( (is.null(input$call_group_codes)) | ("--All--" %in% input$call_group_codes) ) {
-    #   #Don't filter the pool based on call_group_codes if nothing or everything is specified.
-    # } else {
-    #   d_pool <- d_pool %>%
-    #     dplyr::filter(call_group_code %in% input$call_group_codes)
-    # }
-    # 
-    # remaining_tags <- d_pool %>%
-    #   `$`('therapist_tag') %>%
-    #   unique() %>%
-    #   sort()
-    # 
-    # remaining_tags <- c("--Select a Therapist--", remaining_tags)
-    # 
-    # #stillSelected <- isolate(input$call_group_code[input$call_group_code %in% call_group_codes])
-    # #stillSelected <- isolate(
-    # #  ifelse(
-    # #    length(call_group_codes)==0,
-    # #    input$call_group_code,
-    # #    input$call_group_code[input$call_group_code %in% call_group_codes]
-    # #  )
-    # #)
-    # 
-    # updateSelectInput(session, "therapist_tag", choices=remaining_tags)#, selected="--Select a Therapist--")
+  # observe({
+  #   d_survey <- ds_survey
+  # 
+  #   if( (is.null(input$employed_codes)) | ("--All--" %in% input$employed_codes) ) {
+  #     #Don't filter the pool based on employed_codes if nothing or everything is specified.
+  #   } else {
+  #     d_survey <- d_survey |> 
+  #       dplyr::filter(employed %in% input$employed_codes)
+  #   }
+  #   # 
+  #   # remaining_tags <- d_pool %>%
+  #   #   `$`('therapist_tag') %>%
+  #   #   unique() %>%
+  #   #   sort()
+  #   # 
+  #   # remaining_tags <- c("--Select a Therapist--", remaining_tags)
+  #   # 
+  #   # #stillSelected <- isolate(input$call_group_code[input$call_group_code %in% call_group_codes])
+  #   # #stillSelected <- isolate(
+  #   # #  ifelse(
+  #   # #    length(call_group_codes)==0,
+  #   # #    input$call_group_code,
+  #   # #    input$call_group_code[input$call_group_code %in% call_group_codes]
+  #   # #  )
+  #   # #)
+  #   # 
+  #   # updateSelectInput(session, "therapist_tag", choices=remaining_tags)#, selected="--Select a Therapist--")
+  # })
+  
+  ds_survey <- reactive({ 
+    d_survey <- ds_survey_all
+    
+    if( (is.null(input$employed_codes)) | ("--All--" %in% input$employed_codes) ) {
+      #Don't filter the pool based on employed_codes if nothing or everything is specified.
+    } else {
+      d_survey <- d_survey |>
+        dplyr::filter(employed %in% input$employed_codes)
+    }
+    
+    return (d_survey)
   })
   # 
   # #Update the clients available for the selected therapist
