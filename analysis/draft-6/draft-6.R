@@ -10,7 +10,7 @@ cat("Working directory: ", getwd()) # Must be set to Project Directory
 # ---- load-sources ------------------------------------------------------------
 source("./scripts/common-functions.R")
 source("./scripts/operational-functions.R")
-source("./analysis/draft-5/graphing-functions.R")
+source("./analysis/draft-6/graphing-functions.R")
 
 # ---- load-packages -----------------------------------------------------------
 library(magrittr)  # pipes
@@ -31,7 +31,7 @@ requireNamespace("fs") # https://fs.r-lib.org/articles/function-comparisons.html
 
 # ---- declare-functions -------------------------------------------------------
 # custom function for HTML tables
-prints_folder <- paste0("./analysis/draft-5/prints/")
+prints_folder <- paste0("./analysis/draft-6/prints/")
 if (!fs::dir_exists(prints_folder)) {
   fs::dir_create(prints_folder)
 }
@@ -101,7 +101,7 @@ ds1 %>% group_by(employed_f, employed) %>% count()
 l <-
   ds1 %>%
   filter(!is.na(race)) %>%
-  prep_data_trajectory(
+  make_trajectory_data(
     outcome_var    = "employed"  # outcome of interest (binary or continuous)
     ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"        # unique row ids used to compute `cell_count`
@@ -117,38 +117,13 @@ l$data # micro data used for plotting
 l$meta # inherited options and arguments stored as vectors
 l <-
   l %>% # created by `prep_data_trajectory()`
-  plot_trajectory(
+  make_trajectory_plot(
     y_var       = "outcome_mean" # what is put on Y-axis (e.g. cell_prop, cell_count, outcome_mean, outcome_median)
     ,facet      = "grid"       # wrap, grid
     ,scale_mode = "free"       # free, fixed, free_x, free_y
   )
 l$graph
-# ------ functions-combined ---------------------------------------------------------------
-# application as the combined function
-l <-
-  ds1 %>%
-  make_trajectory(
-    outcome_var    = "minority" # outcome of interest (binary or continuous)
-    ,y_var         = "cell_prop"# what is put on Y-axis (e.g. cell_prop, cell_count)
-    ,time_var      = "year_fiscal_date" # quarter_date, year_date, quarter_fiscal_date, year_fiscal_date
-    ,weight_var    = "weight"
-    ,count_var     = "id" # unique row ids used to compute `cell_count`
-    ,color_var     = "employed" # gender, race, age
-    ,vfacet_var    = "age" # gender, race, age
-    ,hfacet_var    = "race" # gender, race, age
-    # ,percent_var   = "race"  # must be one of the used dimensions (color, row, column)
-    # ,total_var     = "gender"# must be one of the used dimensions (color, row, column)
-    # ,facet         = "grid" # grid, wrap
-    # ,scale_mode    = "free" # free, free_y, free_x, fixed
-  )
-# l$data  # micro data used for plotting
-# l$meta  # inherited options and arguments stored as vectors
-l$graph # ggplot
 
-# target interpretation:
-# what percent of MALEs are employed?
-# current interpreation:
-# what percent of EMPLOYED are male
 # ------ study-dates ---------------------------------------------------------------
 # study in using dates on X-asis and applying axis labels
 axis_date_format <-  strftime(
