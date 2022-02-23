@@ -363,6 +363,7 @@ make_trajectory_plot <- function(
 # ----- prep-plot-trajectory --------------------------------------------------
 
 
+
 make_trajectory <- function(
   d
   ,outcome_var    # outcome of interest (binary or continuous)
@@ -462,6 +463,7 @@ make_trajectory <- function(
 #     ,facet         = "grid"      # grid, wrap
 #     ,scale_mode    = "free"      # free, fixed, fixed_y, fixed_x
 #   )
+
 
 
 graph_one_predictor <- function(d,predictor_name){
