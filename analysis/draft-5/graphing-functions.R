@@ -363,7 +363,6 @@ make_trajectory_plot <- function(
 # ----- prep-plot-trajectory --------------------------------------------------
 
 
-
 make_trajectory <- function(
   d
   ,outcome_var    # outcome of interest (binary or continuous)
@@ -465,7 +464,6 @@ make_trajectory <- function(
 #   )
 
 
-
 graph_one_predictor <- function(d,predictor_name){
   # browser()
   # d <- ds4
@@ -544,11 +542,7 @@ graph_one_predictor <- function(d,predictor_name){
 # ds4 %>% graph_one_predictor("age_category")
 
 
-
-
-
-
-graph_one_outcome <- function(d, outcome_name){
+graph_one_outcome <- function(d, outcome_name, w, h){
   # d <- ds4
   # outcome_name = 'applied_benefit'
   d1 <-
