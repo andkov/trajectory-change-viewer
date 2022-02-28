@@ -112,6 +112,21 @@ l <-
     # ,percent_var   = "race"      # must be one of the used dimensions (color, row, column)
     # ,total_var     = "gender"    # must be one of the used dimensions (color, row, column)
   )
+
+ds1 %>%
+  filter(!is.na(race)) %>%
+  make_trajectory_data(
+    outcome_var    = "employed"# outcome of interest (binary or continuous)
+    ,time_var      = "year"     # quarter, year, quarter_fiscal, year_fiscal
+    ,count_var     = "id"
+    ,weight_var    = "weight"
+    ,color_var     = NULL
+    ,vfacet_var    = NULL
+    ,hfacet_var    = NULL
+    ,percent_var   = NULL
+    ,total_var     = NULL
+  )
+
 # `prep_data_trajectory()` creates list object `l` passed to `plot_trajectory`
 l$data # micro data used for plotting
 l$meta # inherited options and arguments stored as vectors
@@ -134,11 +149,12 @@ axis_date_format <-  strftime(
 )
 g <-
   ds1 %>%
-  prep_plot_trajectory(
+  make_trajectory(
     outcome_var    = "employed"   # outcome of interest (binary or continuous)
     ,y_var         = "cell_count" # cell_count, cell_prop
     ,time_var      = "date"       # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"
+    ,weight_var    = "weight"
     # ,color_var   = "gender"
     # ,vfacet_var  = "race"
     # ,hfacet_var  = "gender"
