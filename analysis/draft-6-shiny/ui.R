@@ -58,7 +58,7 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
       HTML("Therapy session for the <em>therapist</em> and <em>client</em> selected above.  If you're just exploring, therapist `wfv3` is a good illustration.<br/><br/>"),
       # Create a new row for the table.
       fluidRow(
-        dataTableOutput(outputId = "survey_dt")
+        shiny::dataTableOutput(outputId = "survey_dt")
       ), #End fluid row with the Group Call table
       HTML('<br/>If you believe any of the data reported to be inaccurate, please email us at <a href="mailto:OKTF-CBT@ouhsc.edu">OKTF-CBT@ouhsc.edu</a> and include any supporting documentation available to you so we might investigate the discrepancy promptly.<br/><br/></a>'),
       

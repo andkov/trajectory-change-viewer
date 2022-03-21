@@ -91,6 +91,7 @@ shinyServer( function(input, output, session) {
       DT::datatable(
         class   = 'cell-border stripe'
         ,filter  = "top"
+        ,escape = FALSE
         ,options = list(
           pageLength = 10,
           autoWidth  = FALSE
@@ -98,10 +99,10 @@ shinyServer( function(input, output, session) {
       )
     return(d1)
   }
-  ,escape = FALSE
+  # ,escape = FALSE
   )
   
-  output$survey_dt <- renderDataTable({
+  output$survey_dt <- shiny::renderDataTable({
     # Filter Client Progress data based on selections
     d <- ds_survey()
   
