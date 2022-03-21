@@ -84,35 +84,22 @@ shinyServer( function(input, output, session) {
   # })
   # 
   
-  
   output$survey_DT <- DT::renderDT({
-    d1 <- tibble::tribble(
-      ~a, ~b, ~d,
-      1,2,3,
-      2,4,5
-    ) %>% 
-      as.data.frame() %>% 
-      DT::datatable()
+    d1 <-
+      ds_survey() %>%
+      as.data.frame() %>%
+      DT::datatable(
+        class   = 'cell-border stripe'
+        ,filter  = "top"
+        ,options = list(
+          pageLength = 10,
+          autoWidth  = FALSE
+        )
+      )
     return(d1)
-  })
-  
-  
-  # output$survey_DT <- DT::renderDT({
-  #   d1 <-
-  #     ds_survey() %>%
-  #     as.data.frame() %>%
-  #     DT::datatable(
-  #       class   = 'cell-border stripe'
-  #       ,filter  = "top"
-  #       ,options = list(
-  #         pageLength = 10,
-  #         autoWidth  = FALSE
-  #       )
-  #     )
-  #   return(d1)
-  # }
-  # ,escape = FALSE
-  # )
+  }
+  ,escape = FALSE
+  )
   
   output$survey_dt <- renderDataTable({
     # Filter Client Progress data based on selections

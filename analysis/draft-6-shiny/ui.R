@@ -101,7 +101,7 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
     ,tabPanel(
       title = "Dynamic Table"
       ,fluidRow(
-        dataTableOutput(outputId = "survey_DT")
+        DT::dataTableOutput(outputId = "survey_DT")
       ),
     ) #End the (third) tab with the debugging details
     ,tabPanel(
