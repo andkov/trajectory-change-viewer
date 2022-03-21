@@ -54,7 +54,7 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
 #   ), #End fluid row with the tag & client_number dropdown boxes
   tabsetPanel( type = "tabs",
     tabPanel(
-      title = "TF-CBT Session Tracking", 
+      title = "Table", 
       HTML("Therapy session for the <em>therapist</em> and <em>client</em> selected above.  If you're just exploring, therapist `wfv3` is a good illustration.<br/><br/>"),
       # Create a new row for the table.
       fluidRow(
@@ -65,7 +65,7 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
 #       HTML('&copy; 2014 <a href="http://oklahomatfcbt.org/" title="Oklahoma TF-CBT" class="accent">Oklahoma TF-CBT</a>'),
 #       shiny::icon("code"), #This is a little cheat to get the table icons work
       HTML('Software for data collection and reporting developed by <a href="http://www.ouhsc.edu/BBMC/" class="accent">OUHSC BBMC</a> <a href="https://github.com/OuhscBbmc/" class="accent"><i class="fa fa-github"></i></a>')
-    ), #End the (first) tab with the Group Call table
+    ) #End the (first) tab with the Group Call table
 #     tabPanel(
 #       title = "Therapist Training", 
 #       HTML(
@@ -98,7 +98,17 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
 #       "Tracking symptom severity over the life of the TF-CBT case. Trainers suggest, at a minimum, administering pre-treatment and post-treatment trauma measures.",
 #       plotOutput(outputId='trauma_symptoms', width='95%', height='400px')
 #     ), #End the (third) tab with the symptoms
-    tabPanel(
+    ,tabPanel(
+      title = "Dynamic Table"
+      ,fluidRow(
+        dataTableOutput(outputId = "survey_DT")
+      ),
+    ) #End the (third) tab with the debugging details
+    ,tabPanel(
+      title = "Graph"
+      
+    ) #End the (third) tab with the debugging details
+    ,tabPanel(
       title = "Details",
       htmlOutput(outputId='table_file_info')
     ) #End the (third) tab with the debugging details

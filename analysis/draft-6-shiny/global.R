@@ -1,9 +1,10 @@
 # rm(list=ls(all=TRUE)) #Clear the memory of variables from previous run. 
 
 # ---- load-sources  -----------------------------------
-
+library(magrittr)
 # ---- load-packages  -----------------------------------
 requireNamespace("readr")
+
 
 # ---- declare-globals  -----------------------------------
 
