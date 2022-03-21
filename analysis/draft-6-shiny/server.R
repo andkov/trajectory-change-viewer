@@ -85,11 +85,13 @@ shinyServer( function(input, output, session) {
   # })
   # 
   
+  
   output$main_plot <- shiny::renderPlot({
     g1 <- 
       # ds_survey()
       ds_survey_all %>% 
       ggplot(aes(x=gender))+
+      # ggplot(aes(x=!!rlang::sym(gender)))+
       geom_bar()
     return(g1)
       
