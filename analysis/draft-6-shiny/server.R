@@ -5,6 +5,7 @@ library(magrittr)
 requireNamespace("dplyr", quietly=FALSE)
 requireNamespace("DT", quietly=FALSE) # DataTables (a jQuery library)
 
+
 # declare-globals  -----------------------------------
 
 # Define a server for the Shiny app
@@ -83,6 +84,16 @@ shinyServer( function(input, output, session) {
   #   }
   # })
   # 
+  
+  output$main_plot <- shiny::renderPlot({
+    g1 <- 
+      # ds_survey()
+      ds_survey_all %>% 
+      ggplot(aes(x=gender))+
+      geom_bar()
+    return(g1)
+      
+  })
   
   output$survey_DT <- DT::renderDT({
     d1 <-

@@ -106,7 +106,9 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
     ) #End the (third) tab with the debugging details
     ,tabPanel(
       title = "Graph"
-      
+      ,fluidRow(
+        shiny::plotOutput(outputId = "main_plot")
+      )
     ) #End the (third) tab with the debugging details
     ,tabPanel(
       title = "Details",
