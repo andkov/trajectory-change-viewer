@@ -70,16 +70,11 @@ shinyServer( function(input, output, session) {
   }) 
   
   ds_survey_skinny <- reactive({ 
-    d_survey <- 
-      ds_survey_all |> 
+    ds_survey_all |> 
       dplyr::select( # The selected dropdown values
         x = !!input$var_x, 
         y = !!input$var_y, 
       )
-    
-
-    
-    return (d_survey)
   })
   
   
@@ -102,24 +97,27 @@ shinyServer( function(input, output, session) {
   
   
   output$main_plot <- shiny::renderPlot({
-    # ds_survey()
     ds_survey_skinny() %>% 
       ggplot(aes(x = x, y = y))+
-      # ggplot(aes(x=!!rlang::sym(gender)))+
       geom_point() +
       labs(
         x = input$var_x,
         y = input$var_y
       )
-
       
   })
   
   output$survey_DT <- DT::renderDT({
-    ds_survey() %>%
-      # ds_survey_skinny() %>%
+    column_names <- c(
+      paste0("X: ", input$var_x),
+      paste0("Y: ", input$var_y)
+    )
+    
+    # ds_survey() %>%
+    ds_survey_skinny() %>%
       DT::datatable(
         class   = 'cell-border stripe'
+        ,colnames = column_names
         ,filter  = "top"
         ,escape = FALSE
         ,options = list(
@@ -128,7 +126,6 @@ shinyServer( function(input, output, session) {
         )
       )
   }
-  # ,escape = FALSE
   )
   
   output$survey_dt <- shiny::renderDataTable({
