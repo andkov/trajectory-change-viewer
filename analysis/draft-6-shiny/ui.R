@@ -107,11 +107,19 @@ shinyUI(fluidPage(theme="bootstrap_lumen.css",
     ,tabPanel(
       title = "Graph"
       ,fluidRow(
-        column(width = 3, # in bootstrap it's a grid of 4X3 (unverified memory) 
-               selectizeInput(
-                 inputId="var_one", label="Variable 1:", width="100%", multiple=FALSE,
-                 choices=c("gender","age","race")
-               )
+        column(
+          width = 2, # in bootstrap it's a grid of 4X3 (unverified memory) 
+          selectizeInput(
+            inputId="var_x", label="Variable X:", width="100%", multiple=FALSE,
+            choices=colnames(ds_survey_all)
+          )
+        ),   
+        column(
+          width = 2, # in bootstrap it's a grid of 4X3 (unverified memory) 
+          selectizeInput(
+            inputId="var_y", label="Variable Y:", width="100%", multiple=FALSE,
+            choices=colnames(ds_survey_all)
+          )
         )      
       )
       ,fluidRow(

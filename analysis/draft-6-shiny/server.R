@@ -67,7 +67,22 @@ shinyServer( function(input, output, session) {
     }
     
     return (d_survey)
+  }) 
+  
+  ds_survey_skinny <- reactive({ 
+    d_survey <- 
+      ds_survey_all |> 
+      dplyr::select( # The selected dropdown values
+        x = !!input$var_x, 
+        y = !!input$var_y, 
+      )
+    
+
+    
+    return (d_survey)
   })
+  
+  
   # 
   # #Update the clients available for the selected therapist
   # observe({ 
@@ -87,20 +102,22 @@ shinyServer( function(input, output, session) {
   
   
   output$main_plot <- shiny::renderPlot({
-    g1 <- 
-      # ds_survey()
-      ds_survey_all %>% 
-      ggplot(aes(x=gender))+
+    # ds_survey()
+    ds_survey_skinny() %>% 
+      ggplot(aes(x = x, y = y))+
       # ggplot(aes(x=!!rlang::sym(gender)))+
-      geom_bar()
-    return(g1)
+      geom_point() +
+      labs(
+        x = input$var_x,
+        y = input$var_y
+      )
+
       
   })
   
   output$survey_DT <- DT::renderDT({
-    d1 <-
-      ds_survey() %>%
-      as.data.frame() %>%
+    ds_survey() %>%
+      # ds_survey_skinny() %>%
       DT::datatable(
         class   = 'cell-border stripe'
         ,filter  = "top"
@@ -110,7 +127,6 @@ shinyServer( function(input, output, session) {
           autoWidth  = FALSE
         )
       )
-    return(d1)
   }
   # ,escape = FALSE
   )
