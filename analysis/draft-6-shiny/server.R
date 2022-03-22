@@ -69,12 +69,47 @@ shinyServer( function(input, output, session) {
     return (d_survey)
   }) 
   
+  wrap_long_values <- function (x, suggested_width = 15) {
+    # browser()
+    if (inherits(x, "character")) {
+      x <-
+        paste(
+          stringi::stri_wrap(x, width = suggested_width), 
+          collapse ="\n"
+        )
+    } else
+      if (inherits(x, "factor")) {
+        # Do something with forcats::fct_relabel
+        # x <- 
+        #   forcats::fct_relabel(
+        #     .f   = x,
+        #     .fun = 
+        #       function (lab) {
+        #         paste(
+        #           stringi::stri_wrap(lab, width = suggested_width),
+        #           collapse ="\n"
+        #         )
+        #       }
+        #   )
+      } else {
+      # Do nothing
+      }
+    
+    return(x)
+  }
   ds_survey_skinny <- reactive({ 
     ds_survey_all |> 
+      # dplyr::slice(1:3) |> 
       dplyr::select( # The selected dropdown values
         x = !!input$var_x, 
         y = !!input$var_y, 
-      )
+      ) |> 
+      dplyr::rowwise() |> 
+      dplyr::mutate(
+        x = wrap_long_values(x, 5),
+        y = wrap_long_values(y),
+      ) |> 
+      dplyr::ungroup()
   })
   
   
