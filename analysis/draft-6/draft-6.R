@@ -25,6 +25,7 @@ library(lubridate) # dates
 library(explore)   # describe_all
 library(labelled)  # formats and look_for
 library(tsibble)   # time
+library(isotone)
 requireNamespace("fs") # https://fs.r-lib.org/articles/function-comparisons.html
 
 # ---- declare-globals ---------------------------------------------------------
