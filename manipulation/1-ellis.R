@@ -35,6 +35,7 @@ library(ggplot2)   # graphs
 library(forcats)   # factors
 library(stringr)   # strings
 library(lubridate) # dates
+library(dplyr)     # I know it's bad, but like glimpsing too much
 # -- 2.Import only certain functions of a package into the search path.
 import::from("magrittr", "%>%")
 # -- 3. Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
@@ -42,13 +43,13 @@ requireNamespace("readr"    )# data import/export
 requireNamespace("readxl"   )# data import/export
 requireNamespace("tidyr"    )# tidy data
 requireNamespace("janitor"  )# tidy data
-requireNamespace("dplyr"    )# Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
 requireNamespace("testit"   )# For asserting conditions meet expected patterns.
 
 #+ declare-globals -------------------------------------------------------------
 # figures will be printed into the following folder:
-(prints_folder <- paste0("./manipulation/0-ellis-prints/"))
+(prints_folder <- paste0("./manipulation/0-ellis-prints/")) # expected by `quick_save()` function
 if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))} # to make sure folder exists
+path_data_input <- "./data-public/raw/example-prosthetic-1.rds" # replace example data with target
 
 #+ echo=F, results="asis" ------------------------------------------------------
 cat("\n# 2.Data ")
@@ -61,18 +62,22 @@ ds0 <- readr::read_rds(path_data_input)
 #+ echo=F, results="asis" ------------------------------------------------------
 cat("\n# 3.Exploration ")
 
+#+ inspect-data ----------------------------------------------------------------
+ds0 %>% glimpse()
 
 #+ echo=F, results="asis" ------------------------------------------------------
 cat("\n# 9.Data Export")
-
+dto <- ds0 # change with the data products to be passed on down the pipeline
+dto_small <- ds0 %>% slice(1:100) # sometimes smaller versions are useful
 #+ save-to-disk, eval=eval_chunks ----------------------------------------------
 # naming convention: step_id - lane_name - version_date
-version_date <- "YYYY-MM-DD"
+# version_date <- "YYYY-MM-DD"
+version_date <- Sys.Date() #"YYYY-MM-DD"
 path_save_dto       <- paste0("./data-private/derived/1-ellis-",version_date,".rds")
 path_save_dto_small <- paste0("./data-private/derived/1-ellis-",version_date,"-small.rds")
 # small version is useful during development and testing
-# dto       %>% readr::write_rds(path_save_dto,      compress = "xz")
-# dto_small %>% readr::write_rds(path_save_dto_small,compress = "xz")
+dto       %>% readr::write_rds(path_save_dto,      compress = "xz")
+dto_small %>% readr::write_rds(path_save_dto_small,compress = "xz")
 
 #+ echo=F, results="asis" ------------------------------------------------------
 cat("\n# A. Session Information{#session-info}")
