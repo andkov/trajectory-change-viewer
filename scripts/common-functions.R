@@ -1,13 +1,31 @@
 # Functions loaded by EVERY script in the project
 
 library(ggplot2)
+# set a theme applied to each graph by default
 ggplot2::theme_set(
   ggplot2::theme_bw(
   )+
-    theme(
-      strip.background = element_rect(fill="grey95", color = NA)
-    )
+    ggplot2::theme(strip.background = element_rect(fill="grey95", color = NA))+
+    ggplot2::theme(title             = ggplot2::element_text(color="gray20")) +
+    ggplot2::theme(axis.text         = ggplot2::element_text(color="gray40")) +
+    ggplot2::theme(axis.title        = ggplot2::element_text(color="gray40")) +
+    ggplot2::theme(panel.border      = ggplot2::element_rect(color="gray80")) +
+    ggplot2::theme(axis.ticks        = ggplot2::element_blank()) +
+    # ggplot2::theme(legend.position   = "none")+
+    ggplot2::theme(strip.background  = element_rect(fill="grey95", color = NA))
 )
+# alternative custom theme that can be applied to a given plot
+repo_theme <- function( base_size = 8 ) {
+  ggplot2::theme_light(base_size=base_size) +
+    ggplot2::theme(title             = ggplot2::element_text(color="gray20")) +
+    ggplot2::theme(axis.text         = ggplot2::element_text(color="gray40")) +
+    ggplot2::theme(axis.title        = ggplot2::element_text(color="gray40")) +
+    ggplot2::theme(panel.border      = ggplot2::element_rect(color="gray80")) +
+    ggplot2::theme(axis.ticks        = ggplot2::element_blank()) +
+    ggplot2::theme(legend.position   = "none")
+  ggplot2::theme(strip.background  = element_rect(fill="grey95", color = NA))
+}
+
 quick_save <- function(g,name,...){
   ggplot2::ggsave(
     filename = paste0(name,".jpg"),
