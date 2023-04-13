@@ -55,12 +55,12 @@ ds1 <-
     employed_f = employed
   ) %>%
   mutate(
-    male = gender == "male"
-    ,female = gender == "female"
-    ,caucasian = race == "caucasian"
-    ,minority = race == "minority"
-    ,aboriginal = race == "aboriginal"
-    ,employed = employed_f == "employed"
+    male        = gender      == "male"
+    ,female     = gender      == "female"
+    ,caucasian  = race        == "caucasian"
+    ,minority   = race        == "minority"
+    ,aboriginal = race        == "aboriginal"
+    ,employed   = employed_f  == "employed"
   ) %>%
   mutate(
     year                = lubridate::year(date) %>% as.integer(),
