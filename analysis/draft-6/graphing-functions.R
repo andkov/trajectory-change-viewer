@@ -48,7 +48,7 @@ make_trajectory_data <- function(
   ,outcome_var          # outcome of interest (binary or continuous)
   ,time_var             # quarter, year, quarter_fiscal, year_fiscal
   ,count_var            # unique row ids used to compute `cell_count`
-  ,weight_var
+  ,weight_var = "weight" # expect a column of weights, create if necessasry
   # optional arguments
   ,color_var   = NULL # creates multiple lines,     color = levels of this variable
   ,vfacet_var  = NULL # creates rows of cells,        row = levels of this variable
@@ -369,7 +369,7 @@ make_trajectory <- function(
   ,y_var         # cell_count, cell_prop
   ,time_var      # quarter, year, quarter_fiscal, year_fiscal
   ,count_var     # unique row identifier
-  ,weight_var = 1L
+  ,weight_var =  "weight" # expect a column of weights, create if necessasry
   # three optional dimensions
   ,color_var   = NULL    # color
   ,vfacet_var  = NULL   # facet rows on this variable

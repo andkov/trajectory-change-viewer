@@ -82,6 +82,7 @@ ds1 %>% glimpse()
 
 ds1 %>% group_by(male, female, gender) %>% count()
 ds1 %>% group_by(employed_f, employed) %>% count()
+ds1 %>% tableone::CreateTableOne(data=.) %>% summary()
 # ------ functions-separate ---------------------------------------------------------------
 # application of individual functions
 
