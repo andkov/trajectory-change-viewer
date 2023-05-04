@@ -111,3 +111,6 @@ Desktop.ini
 #     2. reorganized and moved above this chunk (so it won't be confused with files added unintentionally).
 quick-start.Rproj
 analysis/draft-1/graphing-functions-original.R
+data-private/derived/1-ellis-2023-04-13-small.rds
+data-private/derived/1-ellis-2023-04-13.rds
+manipulation/1-ellis.html
