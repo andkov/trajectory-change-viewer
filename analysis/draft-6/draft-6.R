@@ -48,6 +48,9 @@ ds0  %>%  labelled::look_for()
 # Goal: show variation of binary response across a combo of categorical confounders
 
 # ---- tweak-data --------------------------------------------------------------
+# a typical raw data is likely to need some tweaks, specifically
+# 1 - recoding categorical variables into a set of binary columns (hot-coding)
+# 2 - creating a set of date variables to feed into graphing function
 ds1 <-
   ds0 %>%
   # select(date) %>% # turn ON for inspection, OFF for use
@@ -61,6 +64,7 @@ ds1 <-
     ,minority   = race        == "minority"
     ,aboriginal = race        == "aboriginal"
     ,employed   = employed_f  == "employed"
+    ,weight_one = 1L # when no sampling weight provided, create your own
   ) %>%
   mutate(
     year                = lubridate::year(date) %>% as.integer(),
@@ -73,7 +77,8 @@ ds1 <-
     year_fiscal_date    = as.Date(paste0(year_fiscal,"-04-01")),
     quarter_date        = paste(year,(quarter*3-1),"15", sep="-") %>% as.Date(),
     quarter_fiscal_date = quarter_date,
-  )
+  ) %>% 
+  relocate(employed, .after = "employed_f")
 ds1  %>%  labelled::look_for()
 ds1  %>%
   dplyr::distinct() %>%
@@ -91,6 +96,7 @@ ds1 %>% tableone::CreateTableOne(data=.) %>% summary()
 # outcome_var          # outcome of interest (binary or continuous)
 # time_var             # temporal resolution of x-axis, one dot per quarter, year, quarter_fiscal, year_fiscal
 # count_var            # unique row ids used to compute `cell_count` (count = number of uniques)
+# weight_var           # column of weights create `weight=1L` when NA
 # ### optional arguments
 # color_var   = NULL   # creates multiple lines,     color = levels of this variable
 # vfacet_var  = NULL   # creates rows of cells,        row = levels of this variable
@@ -107,14 +113,14 @@ l <-
     outcome_var    = "employed"  # outcome of interest (binary or continuous)
     ,time_var      = "year"      # quarter, year, quarter_fiscal, year_fiscal
     ,count_var     = "id"        # unique row ids used to compute `cell_count`
-    ,weight_var    = "weight"    # sampling + non-response weight
+    ,weight_var    = "weight"    # sampling + non-response weight  !!! CREATE UNITY OF MISSING !!!
     ,color_var     = "gender"    # gender, age, race (categorical variable)
-    ,vfacet_var    = "race"       # gender, age, race (categorical variable)
-    ,hfacet_var    = "age"      # gender, age, race (categorical variable)
-    # ,percent_var   = "race"      # must be one of the used dimensions (color, row, column)
-    # ,total_var     = "gender"    # must be one of the used dimensions (color, row, column)
+    ,vfacet_var    = "race"      # gender, age, race (categorical variable)
+    ,hfacet_var    = "age"       # gender, age, race (categorical variable)
+    # ,percent_var   = "race"    # must be one of the used dimensions (color, row, column)
+    # ,total_var     = "gender"  # must be one of the used dimensions (color, row, column)
   )
-
+# the simplest case:
 ds1 %>%
   filter(!is.na(race)) %>%
   make_trajectory_data(
@@ -131,7 +137,7 @@ ds1 %>%
 
 # `prep_data_trajectory()` creates list object `l` passed to `plot_trajectory`
 l$data # micro data used for plotting
-l$meta # inherited options and arguments stored as vectors
+l$meta # inherited options and arguments stored as vectors, graphing functions reaching here for specs
 l <-
   l %>% # created by `prep_data_trajectory()`
   make_trajectory_plot(
